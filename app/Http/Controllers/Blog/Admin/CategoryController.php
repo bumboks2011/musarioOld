@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Blog\Admin;
 
 use Illuminate\Http\Request;
 use App\Models\BlogCategory;
+use App\Http\Requests\BlogCategoryUpdateRequest;
 
 class CategoryController extends BaseController
 {
@@ -61,7 +62,7 @@ class CategoryController extends BaseController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(BlogCategoryUpdateRequest $request, $id)
     {
         $item = BlogCategory::find($id);
         if (empty($item)) {
@@ -72,7 +73,7 @@ class CategoryController extends BaseController
         $result = $item->fill($data)->save();
 
         if($result) {
-            return redirect()->route('blog.admin.categories.edit', $item->id)->with(['success' => 'Успешно сохранено']);
+            return redirect()->route('blog.admin.categories.edit', $item->id)->with(['success' => 'Успешно сохранено'])->withInput();
         } else {
             back()->withErrors(['msg' => "Ошибка сохранения"])->withInput();
         }
