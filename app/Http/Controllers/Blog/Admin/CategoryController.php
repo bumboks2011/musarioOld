@@ -87,7 +87,7 @@ class CategoryController extends BaseController
         }
 
         $data = $request->all();
-        $result = $item->fill($data)->save();
+        $result = $item->update($data);
 
         if($result) {
             return redirect()->route('blog.admin.categories.edit', $item->id)->with(['success' => 'Успешно сохранено'])->withInput();
