@@ -18,7 +18,7 @@ class CategoryController extends BaseController
 
     public function __construct()
     {
-        parent::construct();
+        parent::__construct();
         $this->blogCategoryRepository = app(BlogCategoryRepository::class);
     }
 
@@ -30,7 +30,7 @@ class CategoryController extends BaseController
     public function index()
     {
         //$paginator = BlogCategory::paginate(5);
-        $paginator = $this->blogCategoryRepository->getAllWithPaginate();
+        $paginator = $this->blogCategoryRepository->getAllWithPaginate(5);
 
         return view('blog.admin.categories.index', compact('paginator'));
     }
