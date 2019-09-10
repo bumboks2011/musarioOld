@@ -15,7 +15,10 @@ class BlogPostObserver
      */
     public function creating(BlogPost $blogPost)
     {
-        //
+        $this->setPublishedAt($blogPost);
+        $this->setSlug($blogPost);
+        $this->setHtml($blogPost);
+        $this->setUser($blogPost);
     }
 
     /**
@@ -53,11 +56,39 @@ class BlogPostObserver
         }
     }
 
+    /**
+     * If field slug empty, fill convert head.
+     *
+     * @param BlogPost $blogPost
+     */
     protected function setSlug(BlogPost $blogPost)
     {
         if (empty($blogPost->slug)) {
             $blogPost->slug = \Str::slug($blogPost->title);
         }
+    }
+
+    /**
+     * Make markdown -> html generating.
+     *
+     * @param BlogPost $blogPost
+     */
+    protected function setHtml(BlogPost $blogPost)
+    {
+        if ($blogPost->isDirty('content_raw')) {
+            //TODO: Make markdown -> html generating
+            $blogPost->content_html = $blogPost->content_raw;
+        }
+    }
+
+    /**
+     * If field user empty, set user default.
+     *
+     * @param BlogPost $blogPost
+     */
+    protected function setUser(BlogPost $blogPost)
+    {
+        $blogPost->user_id = auth()->id() ?? BlogPost::UNKNOWN_USER;
     }
 
     /**

@@ -57,9 +57,6 @@ class CategoryController extends BaseController
     public function store(BlogCategoryCreateRequest $request)
     {
         $data = $request->input();
-        /*if(empty($data['slug'])) {
-            $data['slug'] = Str::slug($data['title']);
-        }*/
 
         $item = new BlogCategory($data);
         $item->save();
@@ -105,9 +102,6 @@ class CategoryController extends BaseController
         }
 
         $data = $request->all();
-        /*if(empty($data['slug'])) {
-            $data['slug'] = Str::slug($data['title']);
-        }*/
         $result = $item->update($data);
 
         if($result) {
