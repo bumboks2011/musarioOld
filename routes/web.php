@@ -31,11 +31,11 @@ Route::group($groupData, function () {
     $methods = ['index','edit','store','update','create'];
     Route::resource('categories', 'CategoryController')
         ->only($methods)
-        ->names('blog.admin.categories');
+        ->names('blog.admin.categories')->middleware('auth.basic');
     // BlogPost
     Route::resource('posts', 'PostController')
         ->except(['show'])
-        ->names('blog.admin.posts');
+        ->names('blog.admin.posts')->middleware('auth.basic');
 });
 
 //Route::resource('rest', 'RestTestController')->names('restTest');

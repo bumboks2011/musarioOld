@@ -145,4 +145,27 @@ class PostController extends BaseController
                 ->withInput();
         }
     }
+
+    /**
+     * Soft delete post by id.
+     *
+     * @param $id
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function destroy($id)
+    {
+        // soft-delete
+        $result = BlogPost::destroy($id);
+
+        // Full delete
+        //$result = BlogPost::find($id)->forceDelete();
+
+        if ($result) {
+            return redirect()
+                ->route('blog.admin.posts.index')
+                ->with(['success' => "Запись id[$id] удалена"]);
+        } else {
+            return back()->withErrors(['msg' => 'Ошибка удаления']);
+        }
+    }
 }
