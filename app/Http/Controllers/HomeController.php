@@ -3,9 +3,16 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use App\Repositories\BlogPostRepository;
 
 class HomeController extends Controller
 {
+    /**
+     * @var BlogPostRepository
+     */
+    private $blogPostRepository;
+
     /**
      * Create a new controller instance.
      *
@@ -14,6 +21,7 @@ class HomeController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
+        $this->blogPostRepository = app(BlogPostRepository::class);
     }
 
     /**
@@ -23,6 +31,11 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('home');
+        $userId = Auth::user()->id;
+        $postsData = $this->blogPostRepository->getByIdPosts($userId);
+
+        return view('home', [
+            'post_data' => $postsData
+        ]);
     }
 }
