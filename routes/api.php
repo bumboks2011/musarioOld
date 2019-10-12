@@ -23,4 +23,8 @@ Route::group(['namespace' => 'Api'], function () {
         Route::post('login', 'LoginController');
         Route::post('logout', 'LogoutController')->middleware('auth:api');
     });
+    Route::group(['namespace' => 'Playlist', 'prefix' => 'playlist'], function () {
+        Route::get('/', 'GetController')->middleware('auth:api');
+        Route::post('/', 'CreateController')->middleware('auth:api');
+    });
 });
