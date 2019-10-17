@@ -17,11 +17,11 @@ class CreateSongsTable extends Migration
             $table->bigIncrements('id');
             $table->bigInteger('user_id');
             $table->string('name', 255);
-            $table->bigInteger('author_id');
-            $table->bigInteger('style_id');
-            $table->bigInteger('genre_id');
-            $table->year('begin');
-            $table->timestamp('uploaded');
+            $table->bigInteger('author_id')->nullable();
+            $table->bigInteger('genre_id')->nullable();
+            $table->year('begin')->nullable();
+            $table->timestamp('created_at')->nullable();
+            $table->timestamp('updated_at')->nullable();
         });
     }
 

@@ -27,4 +27,12 @@ Route::group(['namespace' => 'Api'], function () {
         Route::get('/', 'GetController')->middleware('auth:api');
         Route::post('/', 'CreateController')->middleware('auth:api');
     });
+    Route::group(['namespace' => 'Song', 'prefix' => 'song'], function () {
+        Route::get('/', 'GetController')->middleware('auth:api');
+        Route::post('/', 'CreateController')->middleware('auth:api');
+    });
+    Route::group(['namespace' => 'Author', 'prefix' => 'author'], function () {
+        Route::get('/', 'GetController')->middleware('auth:api');
+        Route::post('/', 'CreateController')->middleware('auth:api');
+    });
 });
