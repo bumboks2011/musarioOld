@@ -24,9 +24,10 @@ class CreateSong extends FormRequest
     public function rules()
     {
         return [
-            'name' => ['required', 'max:255'],
+            'name' => ['max:255'],
             'author_id' => ['exists:authors,id'],
             'genre_id' => ['exists:genres,id'],
+            'attachment' => ['mimes:mp3'],
         ];
     }
 }

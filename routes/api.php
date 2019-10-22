@@ -26,12 +26,17 @@ Route::group(['namespace' => 'Api'], function () {
     Route::group(['namespace' => 'Playlist', 'prefix' => 'playlist'], function () {
         Route::get('/', 'GetController')->middleware('auth:api');
         Route::post('/', 'CreateController')->middleware('auth:api');
+        Route::put('/', 'UpdateController')->middleware('auth:api');
     });
     Route::group(['namespace' => 'Song', 'prefix' => 'song'], function () {
         Route::get('/', 'GetController')->middleware('auth:api');
         Route::post('/', 'CreateController')->middleware('auth:api');
     });
     Route::group(['namespace' => 'Author', 'prefix' => 'author'], function () {
+        Route::get('/', 'GetController')->middleware('auth:api');
+        Route::post('/', 'CreateController')->middleware('auth:api');
+    });
+    Route::group(['namespace' => 'Genre', 'prefix' => 'genre'], function () {
         Route::get('/', 'GetController')->middleware('auth:api');
         Route::post('/', 'CreateController')->middleware('auth:api');
     });

@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Api\Author;
+namespace App\Http\Requests\Api\Playlist;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateAuthor extends FormRequest
+class CreatePlaylist extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.

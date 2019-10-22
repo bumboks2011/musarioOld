@@ -2,19 +2,21 @@
 
 namespace App\Http\Controllers\Api\Playlist;
 
-use Illuminate\Http\Request;
+use App\Http\Requests\Api\Playlist\UpdatePlaylist;
 use App\Http\Controllers\Controller;
+use App\Services\Playlist\PlaylistService;
 
 class UpdateController extends Controller
 {
     /**
      * Handle the incoming request.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param UpdatePlaylist $request
+     * @param PlaylistService $service
+     * @return void
      */
-    public function __invoke(Request $request)
+    public function __invoke(UpdatePlaylist $request, PlaylistService $service)
     {
-        //
+        return response()->json(['status'=> $service->update($request)], 200);
     }
 }

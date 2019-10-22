@@ -5,7 +5,7 @@ namespace App\Repositories\Author;
 
 use App\Models\Author;
 
-class AuthorRepository implements AuthorInterface
+class AuthorRepository implements AuthorRepositoryInterface
 {
     public $author;
 
@@ -21,7 +21,7 @@ class AuthorRepository implements AuthorInterface
     public function create($name)
     {
         if($this->getByName($name)) {
-            $this->author->name = $name;
+            $this->author->name = trim($name);
             $this->author->save();
 
         }
@@ -29,7 +29,7 @@ class AuthorRepository implements AuthorInterface
         return $this->author->id;
     }
 
-    public function getByName($name)
+    private function getByName($name)
     {
         $result = $this->author->query()->where('name', '=', $name)->get()->toArray();
 

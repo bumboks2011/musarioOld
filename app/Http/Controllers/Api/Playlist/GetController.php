@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\Playlist;
 
+use App\Services\Playlist\PlaylistService;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
@@ -10,11 +11,12 @@ class GetController extends Controller
     /**
      * Handle the incoming request.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param \Illuminate\Http\Request $request
+     * @param PlaylistService $service
      * @return \Illuminate\Http\Response
      */
-    public function __invoke(Request $request)
+    public function __invoke(Request $request, PlaylistService $service)
     {
-        return response()->json(['your_id'=> $request->user()->id], 200);
+        return response()->json(['playlists'=> $service->getAll($request)], 200);
     }
 }

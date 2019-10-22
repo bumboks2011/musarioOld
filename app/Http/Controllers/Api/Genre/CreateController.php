@@ -2,19 +2,21 @@
 
 namespace App\Http\Controllers\Api\Genre;
 
-use Illuminate\Http\Request;
+use App\Http\Requests\Api\Genre\CreateGenre;
 use App\Http\Controllers\Controller;
+use App\Services\Genre\GenreService;
 
 class CreateController extends Controller
 {
     /**
      * Handle the incoming request.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param CreateGenre $request
+     * @param GenreService $service
+     * @return void
      */
-    public function __invoke(Request $request)
+    public function __invoke(CreateGenre $request, GenreService $service)
     {
-        //
+        return response()->json(['id'=> $service->create($request)], 200);
     }
 }

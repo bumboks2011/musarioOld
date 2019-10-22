@@ -7,20 +7,20 @@ use App\Repositories\Author\AuthorRepository;
 
 class AuthorService implements AuthorServiceInterface
 {
-    private $songModel;
+    private $authorRepository;
 
-    public function __construct(AuthorRepository $song)
+    public function __construct(AuthorRepository $author)
     {
-        $this->songModel = $song;
+        $this->authorRepository = $author;
     }
 
     public function create($data) {
 
-        return $this->songModel->create($data->name);
+        return $this->authorRepository->create($data->name);
     }
 
     public function getAll() {
 
-        return $this->songModel->getAll();
+        return $this->authorRepository->getAll();
     }
 }

@@ -5,12 +5,15 @@ namespace App\Repositories\Song;
 
 use App\Models\Song;
 
-class SongRepository implements SongInterface
+class SongRepository implements SongRepositoryInterface
 {
-    public $song;
+    private $song;
     private $limit = ['id','name','author_id', 'genre_id', 'begin'];
+
     /**
-     * @var string
+     *
+     * @param Song $song
+     * @param FileService $file
      */
 
     public function __construct(Song $song)
@@ -20,11 +23,7 @@ class SongRepository implements SongInterface
 
     public function create($user_id, $name)
     {
-        $this->song->user_id = $user_id;
-        $this->song->name = $name;
-        $this->song->save();
-
-        return true;
+        return $this->song->query()->create(['user_id' => $user_id, 'name' => $name])->id;
     }
 
     public function getAll($user_id)

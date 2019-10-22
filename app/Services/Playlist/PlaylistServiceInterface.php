@@ -1,10 +1,10 @@
 <?php
 
 
-namespace App\Services\Song;
+namespace App\Services\Playlist;
 
 
-interface SongServiceInterface
+interface PlaylistServiceInterface
 {
     public function create($data);
     public function getAll($data);

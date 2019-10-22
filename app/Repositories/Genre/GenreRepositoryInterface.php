@@ -1,10 +1,10 @@
 <?php
 
 
-namespace App\Repositories\Author;
+namespace App\Repositories\Genre;
 
 
-interface AuthorInterface
+interface GenreRepositoryInterface
 {
     public function create($name);
     public function getAll();
