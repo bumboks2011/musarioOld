@@ -27,7 +27,8 @@ class GenreService implements GenreServiceInterface
         return $this->genreRepository->create($data->name);
     }
 
-    public function getAll() {
+    public function getAll()
+    {
 
         return $this->genreRepository->getAll();
     }

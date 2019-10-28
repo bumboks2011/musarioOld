@@ -28,9 +28,14 @@ class PlaylistRepository implements PlaylistRepositoryInterface
         return $this->playlist->save();
     }
 
-    public function update($data)
+    public function update($id, $name)
     {
-        return $this->playlist->find($data->id)->update(['name' => $data->name]);
+        return $this->playlist->find($id)->update(['name' => $name]);
+    }
+
+    public function delete($id)
+    {
+        return $this->playlist->find($id)->delete();
     }
 
     public function getAll($user_id)

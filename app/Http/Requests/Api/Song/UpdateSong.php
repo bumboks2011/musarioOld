@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Api\Song;
 
+use App\Models\Song;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateSong extends FormRequest
@@ -13,7 +14,13 @@ class UpdateSong extends FormRequest
      */
     public function authorize()
     {
-        return true;
+        $song = Song::find($this->id);
+
+        if (!$song) {
+            abort(404);
+        }
+
+        return $song->user_id == $this->user()->id;
     }
 
     /**
@@ -24,7 +31,7 @@ class UpdateSong extends FormRequest
     public function rules()
     {
         return [
-            //
+            'name' => ['required','max:255'],
         ];
     }
 }

@@ -22,7 +22,12 @@ class PlaylistService implements PlaylistServiceInterface
 
     public function update($data)
     {
-        return $this->playlistRepository->update($data);
+        return $this->playlistRepository->update($data->id, $data->name);
+    }
+
+    public function delete($data)
+    {
+        return $this->playlistRepository->delete($data->id);
     }
 
     public function getAll($data)

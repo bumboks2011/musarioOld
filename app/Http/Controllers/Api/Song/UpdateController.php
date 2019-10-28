@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Api\Song;
 
+use App\Http\Requests\Api\Song\UpdateSong;
+use App\Services\Song\SongService;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
@@ -10,11 +12,12 @@ class UpdateController extends Controller
     /**
      * Handle the incoming request.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param UpdateSong $request
+     * @param SongService $service
+     * @return void
      */
-    public function __invoke(Request $request)
+    public function __invoke(UpdateSong $request, SongService $service)
     {
-        //
+        return response()->json(['status'=> $service->update($request)], 200);
     }
 }

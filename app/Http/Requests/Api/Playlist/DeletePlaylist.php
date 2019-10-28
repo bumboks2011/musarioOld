@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Requests\Api\Song;
+namespace App\Http\Requests\Api\Playlist;
 
 use App\Models\Playlist;
 use Illuminate\Foundation\Http\FormRequest;
 
-class CreateSong extends FormRequest
+class DeletePlaylist extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -14,7 +14,11 @@ class CreateSong extends FormRequest
      */
     public function authorize()
     {
-        $playlist = Playlist::find($this->playlist_id);
+        $playlist = Playlist::find($this->id);
+
+        if (!$playlist) {
+            abort(404);
+        }
 
         return $playlist->user_id == $this->user()->id;
     }
@@ -27,11 +31,7 @@ class CreateSong extends FormRequest
     public function rules()
     {
         return [
-            'name' => ['max:255'],
-            'author_id' => ['exists:authors,id'],
-            'genre_id' => ['exists:genres,id'],
-            'playlist_id' => ['required','exists:playlists,id'],
-            'music.*.' => ['mimes:mp3'],
+            //
         ];
     }
 }

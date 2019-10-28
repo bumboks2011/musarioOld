@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Http\Request;
-
+//use App\Http\Middleware\JsonApiMiddleware;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -18,26 +18,33 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 Route::group(['namespace' => 'Api'], function () {
-    Route::group(['namespace' => 'Auth', 'prefix' => 'auth'], function () {
+    Route::group(['namespace' => 'Auth', 'prefix' => 'auths'], function () {
         Route::post('register', 'RegisterController');
         Route::post('login', 'LoginController');
         Route::post('logout', 'LogoutController')->middleware('auth:api');
     });
-    Route::group(['namespace' => 'Playlist', 'prefix' => 'playlist'], function () {
+    Route::group(['namespace' => 'Playlist', 'prefix' => 'playlists'], function () {
         Route::get('/', 'GetController')->middleware('auth:api');
         Route::post('/', 'CreateController')->middleware('auth:api');
-        Route::put('/', 'UpdateController')->middleware('auth:api');
+        Route::put('/{id}', 'UpdateController')->middleware('auth:api');
+        Route::delete('/{id}', 'DeleteController')->middleware('auth:api');
     });
-    Route::group(['namespace' => 'Song', 'prefix' => 'song'], function () {
+    Route::group(['namespace' => 'Song', 'prefix' => 'songs'], function () {
+        Route::get('/', 'GetController')->middleware('auth:api');
+        Route::post('/', 'CreateController')->middleware('auth:api');
+        Route::put('/{id}', 'UpdateController')->middleware('auth:api');
+    });
+    Route::group(['namespace' => 'Author', 'prefix' => 'authors'], function () {
         Route::get('/', 'GetController')->middleware('auth:api');
         Route::post('/', 'CreateController')->middleware('auth:api');
     });
-    Route::group(['namespace' => 'Author', 'prefix' => 'author'], function () {
+    Route::group(['namespace' => 'Genre', 'prefix' => 'genres'], function () {
         Route::get('/', 'GetController')->middleware('auth:api');
         Route::post('/', 'CreateController')->middleware('auth:api');
     });
-    Route::group(['namespace' => 'Genre', 'prefix' => 'genre'], function () {
-        Route::get('/', 'GetController')->middleware('auth:api');
-        Route::post('/', 'CreateController')->middleware('auth:api');
+    Route::group(['namespace' => 'Order', 'prefix' => 'orders'], function () {
+        Route::get('/{id}', 'GetController')->middleware('auth:api');
+        Route::put('/{id}', 'UpdateController')->middleware('auth:api');
+        Route::delete('/{id}', 'DeleteController')->middleware('auth:api');
     });
 });
