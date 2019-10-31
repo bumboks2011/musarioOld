@@ -16,5 +16,7 @@ Route::get('/', function () {
 });
 Auth::routes();
 Route::get('/home', 'HomeController@index')->name('home');
+Route::get('/list', 'HomeController@list')->name('list');
+Route::get('/upload', 'HomeController@upload')->name('upload');
 
 //Route::resource('rest', 'RestTestController')->names('restTest');

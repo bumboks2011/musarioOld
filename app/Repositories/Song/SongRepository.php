@@ -42,9 +42,9 @@ class SongRepository implements SongRepositoryInterface
         return $this->song->query()->where('user_id', '=', $user_id)->get($this->limit)->toArray();
     }
 
-    public function update($id, $name)
+    public function update($id, $name, $author_id, $genre_id, $begin)
     {
-        return $this->song->find($id)->update(['name' => $name]);
+        return $this->song->find($id)->update(['name' => $name, 'author_id' => $author_id, 'genre_id' => $genre_id, 'begin' => $begin]);
     }
 
     public function delete($songId)

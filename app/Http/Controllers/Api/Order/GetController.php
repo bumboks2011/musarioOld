@@ -18,6 +18,6 @@ class GetController extends Controller
      */
     public function __invoke(GetOrder $request, OrderService $service)
     {
-        return response()->json(['order'=> $service->getOrder($request)], 200);
+        return response()->json($service->getOrder($request), 200);
     }
 }

@@ -18,6 +18,6 @@ class UpdateController extends Controller
      */
     public function __invoke(UpdateOrder $request, OrderService $service)
     {
-        return response()->json(['order'=> $service->changePosId($request)], 200);
+        return response()->json($service->changePosId($request), 200);
     }
 }

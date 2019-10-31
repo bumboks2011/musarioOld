@@ -30,7 +30,7 @@ class SongService implements SongServiceInterface
 
     public function update($data)
     {
-        return $this->songRepository->update($data->id, $data->name);
+        return $this->songRepository->update($data->id, $data->name, $data->author_id, $data->genre_id, $data->begin);
     }
 
     public function getAll($data)
@@ -40,6 +40,6 @@ class SongService implements SongServiceInterface
 
     public function delete($songId)
     {
-        return [$this->fileService->delete($songId.'.mp3') && $this->songRepository->delete($songId)];
+        return $this->fileService->delete($songId.'.mp3') && $this->songRepository->delete($songId);
     }
 }

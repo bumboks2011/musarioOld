@@ -1,0 +1,463 @@
+<template>
+    <div>
+        <div id="playlist">
+            <img src="pic/cover.jpg" id="coverPicture" class="rounded float-left w41 pr-2" alt="cover">
+            <h1 v-if="!editPlaylistName"> <span @click="editPlaylistName = true">{{ playlistName }}</span></h1>
+            <div v-else class="input-group mb-3 col-7 col-sm-7">
+                <input type="text" class="form-control" placeholder="Enter new playlist name" v-model="playlistName">
+                <div class="input-group-append">
+                    <button type="button" class="btn btn-dark" @click="editPlayList(id,playlistName); editPlaylistName = false">edit</button>
+                    <button type="button" class="btn btn-dark" @click="removePlayList(id,playlistName); editPlaylistName = false">delete</button>
+                </div>
+            </div>
+
+            <!--<button type="button" class="btn btn-dark dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                {{ playlistName }}
+            </button>
+            <div class="dropdown-menu">
+                <a class="dropdown-item" @click="id = item.id; name = item.name; getSongList();" v-for="item in playlists" v-model="item.id">{{ item.name }}</a>
+            </div>-->
+
+            <div class="float-left p-1" v-for="item in playlists" style="font-size: 18px;">
+                <a class="badge badge-pill badge-dark text-white p-2" @click="id = item.id; playlistName = item.name; getSongList();"  v-model="item.id">{{ item.name }}</a>
+            </div>
+
+            <div class="float-left p-1" style="font-size: 18px;">
+                <a class="badge badge-pill badge-dark text-white p-2" data-toggle="modal" data-target="#addModal">+</a>
+            </div>
+
+            <!-- Modal -->
+            <div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="addModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content bg-dark">
+                        <div class="modal-header">
+                            <h5 class="modal-title text-white" id="addModalLabel">Add playlist</h5>
+                            <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body bg-white">
+                            <div class="input-group mb-3">
+                                <input type="text" class="form-control" placeholder="Enter new playlist name" v-model="addPlaylistName">
+                                <div class="input-group-append">
+                                    <button type="button" class="btn btn-dark" data-dismiss="modal" @click="addPlayList(addPlaylistName)">add</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <br>
+
+        <div class="d-inline-flex bg-dark rounded w-100" id="player">
+            <div class="btn-group bg-dark rounded h-100" role="group" aria-label="Basic example">
+                <button type="button" class="btn btn-dark" v-on:click="prevSong()"><</button>
+                <button type="button" class="btn btn-dark" v-on:click="play = !play; update();  play ? audio.play() : audio.pause()"><span v-if="play">||</span><span v-else>&#9658;</span></button>
+                <button type="button" class="btn btn-dark" v-on:click="nextSong()">></button>
+            </div>
+            <div class="h-200 p-1 w-100">
+                <input type="range" class="custom-range h-100" v-bind:min="min" v-bind:max="audio.duration" :key="time" v-model="audio.currentTime" id="progress">
+            </div>
+            <div class="btn-group bg-dark rounded h-100" role="group" aria-label="Basic example">
+                <button type="button" class="btn btn-dark" v-on:click="volume = !volume">&#9835;</button>
+            </div>
+            <div class="h-200 p-1" v-if="volume">
+                <input type="range" class="custom-range h-100" min="0.0" max="1.0" step="0.05" v-model="audio.volume" id="progress">
+            </div>
+            <div class="btn-group bg-dark rounded h-100" role="group" aria-label="Basic example">
+                <button type="button" class="btn btn-dark" v-on:click="direct = !direct">
+                    <i class="fas fa-reply-all" v-if="direct"></i>
+                    <i class="fas fa-reply" v-else></i>
+                </button>
+            </div>
+        </div>
+        <div id="list">
+            <ul class="list-group">
+                <li v-for="(item, index) in list" v-bind:value="item.name" class="clearfix list-group-item list-group-item-action">
+                    <span @click="name = item.name; playSong(item.id); active = item.id;">
+                        <i class="fas fa-pause pr-3" v-if="active == item.id"></i>
+                        <i class="fas fa-play pr-3" v-else></i>
+                    </span>
+                    {{ item.name }}
+                    <!--<a href="#" class="badge badge-pill badge-dark">{{ item.style }}</a>-->
+                    <a href="#" class="badge badge-pill badge-dark">{{ item.author }}</a>
+                    <i class="fas fa-trash float-right" @click="deleteSong(item.orderId)"></i>
+                    <i class="fas fa-pen float-right pr-3" @click="openModal(item)" data-toggle="modal" data-target="#editModal"></i>
+                    <i class="fas fa-chevron-up float-right pr-3" @click="changePos(item.pos_id, 'up')"></i>
+                    <i class="fas fa-chevron-down float-right pr-1" @click="changePos(item.pos_id, 'down')"></i>
+                </li>
+            </ul>
+            <!-- Modal -->
+            <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content bg-dark">
+                        <div class="modal-header">
+                            <h5 class="modal-title text-white" id="editModalLabel">Edit song</h5>
+                            <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body bg-white">
+                            <div class="input-group mb-0">
+                                <input type="text" class="form-control" placeholder="Enter new song name" v-model="editname">
+                            </div>
+
+                            <p class="pt-2 mb-0">Author <a class="badge badge-pill badge-dark text-white" @click="editAuthor = true">+</a></p>
+                            <div v-if="editAuthor" class="input-group mb-3">
+                                <input type="text" class="form-control" placeholder="Enter new author name" v-model="authorName">
+                                <div class="input-group-append">
+                                    <button type="button" class="btn btn-dark" @click="editAuthor = false; addAuthor();">add</button>
+                                </div>
+                            </div>
+                            <select class="custom-select" v-model="author" name="author">
+                                <option v-for="item in authorArray" v-bind:value="item.id">
+                                    {{ item.name }}
+                                </option>
+                            </select>
+
+                            <p class="pt-2 mb-0">Style
+                                <a class="badge badge-pill badge-dark text-white" @click="editStyle = true">+</a>
+                                <a class="badge badge-pill badge-dark text-white" @click="autoStyle()">find</a>
+                            </p>
+                            <div v-if="editStyle" class="input-group mb-3">
+                                <input type="text" class="form-control" placeholder="Enter new style name" v-model="styleName">
+                                <div class="input-group-append">
+                                    <button type="button" class="btn btn-dark" @click="editStyle = false; addStyle();">add</button>
+                                </div>
+                            </div>
+                            <select class="custom-select" v-model="style" name="style">
+                                <option v-for="item in styleArray" v-bind:value="item.id">
+                                    {{ item.name }}
+                                </option>
+                            </select>
+                        </div>
+                        <div class="modal-footer bg-white">
+                            <button type="button" class="btn btn-dark col-sm-12" data-dismiss="modal" @click="editSong()">save</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
+
+<script>
+    export default {
+        props: [
+
+        ],
+        data: function () {
+            return {
+                play: false,
+                volume: false,
+                direct: false,
+                time: 0.0,
+                min: 0.0,
+                name: '',
+                audio: new Audio(),
+                path: '/storage/uploads/',
+                type: ['mp3'],
+
+                list: [],
+                active: 0,
+                editname: '',
+                editid: 0,
+                authorArray: [],
+                author: 0,
+                editAuthor: false,
+                authorName: '',
+                styleArray: [],
+                style: 0,
+                editStyle: false,
+                styleName: '',
+
+                playlists: [],
+                activePlaylist: 0,
+                id: 0,
+                playlistName: '',
+                editPlaylistName: false,
+                addPlaylistName: '',
+            }
+        },
+        methods:{
+            ///// Player
+            update(){
+                //this.$forceUpdate();
+                this.time = this.audio.currentTime;
+                if (this.audio.ended) {
+                    this.nextSong();
+                }
+                setTimeout(this.update, 1000);
+            },
+            checkFormat(){
+                for(var i = 0; i < this.type.length; i++) {
+                    if(!!this.audio.canPlayType && this.audio.canPlayType('audio/'+this.type[i]) !== "") {
+                        this.type = this.type[i];
+                        break;
+                    }
+                }
+                if(this.type.constructor === Array){
+                    alert('Sorry! Your browser not support '+this.type.join(','));
+                }
+            },
+            playSong(id){
+                if(id != this.active){
+                    this.audio.src = this.path + id + '.' + this.type;
+                    this.play = true;
+                    this.audio.play();
+                    this.findCover(this.name);
+                } else {
+                    this.play = !this.play;
+                    if (this.play) {
+                        this.audio.play();
+                    } else {
+                        this.audio.pause();
+                    }
+                }
+                this.update();
+            },
+            nextSong(){
+                var active;
+                for (var i = 0; i < this.list.length; i++) {
+                    if (this.list[i].id == this.active) {
+                        active = i + 1;
+                        break;
+                    }
+                }
+                if (active == this.list.length) {
+                    active = 0;
+                    if (this.direct == true) {
+                        this.nextPlaylist();
+                    }
+                }
+
+                this.name = this.list[active].name;
+                this.playSong(this.list[active].id);
+                this.active = this.list[active].id;
+            },
+            prevSong(){
+                var active;
+                for (var i = 0; i < this.list.length; i++) {
+                    if (this.list[i].id == this.active) {
+                        active = i - 1;
+                        break;
+                    }
+                }
+                if (active < 0) {
+                    active = this.list.length - 1;
+                    if (this.direct == true) {
+                        this.prevPlaylist();
+                    }
+                }
+                this.name = this.list[active].name;
+                this.playSong(this.list[active].id);
+                this.active = this.list[active].id;
+            },
+
+
+            ////// List
+            getSongList(id = this.id){
+                axios
+                    .get('api/orders/' + id)
+                    .then(response => {console.log(response.data); this.list = response.data;})
+                    .catch(error => console.log(error));
+            },
+            changePos(pos, direction){
+                var check = direction == 'up' ? Number(pos) + 1 : Number(pos) - 1 ;
+                if (check <= 0 || check > this.list.length) {
+                    alert('Position is out range!');
+                    return;
+                }
+
+                axios
+                    .put('api/orders/' + pos, {action: direction, playlist_id: this.id})
+                    .then(response => {
+                        //console.log(json);
+                        if(response.data === true) {
+                            this.getSongList();
+                        } else {
+                            alert('Change position error!');
+                        }
+                    })
+                    .catch(error => console.log(error));
+            },
+            deleteSong(id){
+                if (confirm("Are you sure?")) {
+                    axios
+                        .delete('api/orders/' + id)
+                        .then(response => {
+                            if(response.data === true) {
+                                this.getSongList();
+                            } else {
+                                alert('Delete song error!');
+                            }
+                        })
+                        .catch(error => console.log(error));
+                }
+            },
+            getAuthor(){
+                axios
+                    .get('api/authors')
+                    .then(response => {
+                        this.authorArray = response.data;
+                        this.author = response.data['id'];
+                    })
+                    .catch(error => console.log(error));
+            },
+            getStyle(strip = false){
+                axios
+                    .get('api/genres')
+                    .then(response => {
+                        this.styleArray = response.data;
+                        if(strip === false) {
+                            this.style = response.data['id'];
+                        }
+                    })
+                    .catch(error => console.log(error));
+            },
+            addAuthor(){
+                axios
+                    .post('api/authors', {name: this.authorName})
+                    .then(response => {
+                        this.getAuthor();
+                        this.author = response.data['id'];
+                    })
+                    .catch(error => console.log(error));
+            },
+            addStyle(){
+                axios
+                    .post('api/genres', {name: this.styleName})
+                    .then(response => {
+                        this.getStyle();
+                        this.style = response.data['id'];
+                    })
+                    .catch(error => console.log(error));
+            },
+            openModal(edit){
+                this.editname = edit.name;
+                this.editid = edit.id;
+                this.author = edit.author_id;
+                this.style = edit.genre_id;
+            },
+            editSong(){
+                axios
+                    .put('api/songs/' + this.editid, {name: this.editname, author_id: this.author, genre_id: this.style})
+                    .then(response => {
+                        if(response.data === true) {
+                            this.getSongList();
+                        } else {
+                            alert('Edit song error!');
+                        }
+                    })
+                    .catch(error => console.log(error));
+            },
+            autoStyle(){
+                axios
+                    .post('api/services/genre', {name: this.editname})
+                    .then(response => {
+                        this.styleArray = this.getStyle(true);
+                        this.style = response.data;
+                    })
+                    .catch(error => {
+                        console.log(error);
+                        alert('Auto style not found!');
+                    });
+            },
+            findCover(name){
+                axios
+                    .post('api/services/cover', {name: this.name})
+                    .then(response => {
+                        document.getElementById("coverPicture").src = response.data;
+                    })
+                    .catch(error => {
+                        console.log(error);
+                    });
+            },
+
+            ///////// Playlist
+            getPlayList(stretch = false){
+                axios
+                    .get('api/playlists')
+                    .then(response => {
+                        console.log(response.data);
+                        this.playlists = response.data;
+                        if (stretch === false) {
+                            this.playlistName = response.data[0]['name'];
+                            this.id = response.data[0]['id'];
+                            this.getSongList(response.data[0]['id']);
+                        }
+                    })
+                    .catch(error => console.log(error));
+            },
+            editPlayList(id, name){
+                axios
+                    .put('api/playlists/' + id, {name: name})
+                    .then(response => {
+                        this.playlistName = name;
+                        this.id = id;
+                        this.getPlayList(true);
+                        //list.getSongList(json[0]['id']);
+                    })
+                    .catch(error => console.log(error));
+            },
+            removePlayList(id, name){
+                if (confirm("Are you sure?")) {
+                    axios
+                        .delete('api/playlists/' + id)
+                        .then(response => {
+                            //console.log(json);
+                            if(response.data === false) {
+                                alert('Delete playlist error!');
+                            }
+                            this.playlists = response.data;
+                            this.playlistName = response.data[0]['name'];
+                            this.id = response.data[0]['id'];
+                            this.getSongList(response.data[0]['id']);
+                        })
+                        .catch(error => console.log(error));
+                }
+            },
+            addPlayList(name){
+                axios
+                    .post('api/playlists', {name: name})
+                    .then(response => {
+                        this.playlistName = response.data['name'];
+                        this.id = response.data['id'];
+                        this.getPlayList();
+                        this.getSongList(response.data['id']);
+                    })
+                    .catch(error => console.log(error));
+            },
+            nextPlaylist(){
+                console.log('sss');
+                this.activePlaylist += 1;
+                if (this.activePlaylist == this.playlists.length) {
+                    this.activePlaylist = 0;
+                }
+                this.id = this.playlists[this.activePlaylist]['id'];
+                this.getSongList();
+            },
+            prevPlaylist(){
+                this.activePlaylist--;
+                if (this.activePlaylist < 0) {
+                    this.activePlaylist = this.playlists.length - 1;
+                }
+                this.id = this.playlists[this.activePlaylist]['id'];
+                this.getSongList();
+            }
+        },
+        mounted(){
+            this.getPlayList();
+
+            //this.getSongList();
+
+            this.getAuthor();
+            this.getStyle();
+
+            this.checkFormat();
+            this.audio.src = this.path + 2 + '.' + this.type;
+        },
+    }
+</script>

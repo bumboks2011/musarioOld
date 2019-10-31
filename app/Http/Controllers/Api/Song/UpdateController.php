@@ -18,6 +18,6 @@ class UpdateController extends Controller
      */
     public function __invoke(UpdateSong $request, SongService $service)
     {
-        return response()->json(['status'=> $service->update($request)], 200);
+        return response()->json($service->update($request), 200);
     }
 }

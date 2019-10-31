@@ -17,6 +17,6 @@ class CreateController extends Controller
      */
     public function __invoke(CreatePlaylist $request, PlaylistService $service)
     {
-        return response()->json(['status'=> $service->create($request)], 200);
+        return response()->json($service->create($request), 200);
     }
 }

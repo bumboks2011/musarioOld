@@ -18,6 +18,6 @@ class DeleteController extends Controller
      */
     public function __invoke(DeletePlaylist $request, PlaylistService $service)
     {
-        return response()->json(['status'=> $service->delete($request)], 200);
+        return response()->json($service->delete($request), 200);
     }
 }

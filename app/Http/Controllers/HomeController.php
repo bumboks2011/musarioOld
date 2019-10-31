@@ -26,4 +26,24 @@ class HomeController extends Controller
     {
         return view('welcome');
     }
+
+    /**
+     * Show the application dashboard.
+     *
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function list()
+    {
+        return view('list');
+    }
+
+    /**
+     * Show the application dashboard.
+     *
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function upload()
+    {
+        return view('upload');
+    }
 }

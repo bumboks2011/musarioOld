@@ -17,6 +17,6 @@ class GetController extends Controller
      */
     public function __invoke(Request $request, PlaylistService $service)
     {
-        return response()->json(['playlists'=> $service->getAll($request)], 200);
+        return response()->json($service->getAll($request), 200);
     }
 }

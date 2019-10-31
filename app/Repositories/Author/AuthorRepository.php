@@ -23,7 +23,6 @@ class AuthorRepository implements AuthorRepositoryInterface
         if($this->getByName($name)) {
             $this->author->name = trim($name);
             $this->author->save();
-
         }
 
         return $this->author->id;

@@ -16,19 +16,19 @@ class GenreRepository implements GenreRepositoryInterface
 
     public function create($name)
     {
-        if ($this->getByName($name)) {
+        $result = $this->getByName($name);
+        if (empty($result)) {
             $this->genre->name = trim($name);
             $this->genre->save();
+            return $this->genre->id;
         }
 
-        return $this->genre->id;
+        return $result[0]['id'];
     }
 
     private function getByName($name)
     {
-        $result = $this->genre->query()->where('name', '=', $name)->get()->toArray();
-
-        return empty($result);
+        return $this->genre->where('name', '=', $name)->get()->toArray();
     }
 
     public function getAll()

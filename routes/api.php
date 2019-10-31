@@ -47,4 +47,8 @@ Route::group(['namespace' => 'Api'], function () {
         Route::put('/{id}', 'UpdateController')->middleware('auth:api');
         Route::delete('/{id}', 'DeleteController')->middleware('auth:api');
     });
+    Route::group(['namespace' => 'Service', 'prefix' => 'services'], function () {
+        Route::post('/cover', 'GetCoverController')->middleware('auth:api');
+        Route::post('/genre', 'GetGenreController')->middleware('auth:api');
+    });
 });

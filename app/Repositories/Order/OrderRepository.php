@@ -19,9 +19,10 @@ class OrderRepository implements OrderRepositoryInterface
     {
         return $this->order->query()
             ->join("songs","songs.id","=","orders.song_id")
+            ->join("authors","authors.id","=","songs.author_id")
             ->where('playlist_id', '=', $playlistId)
-            ->orderBy('pos_id')
-            ->get(['songs.id','songs.name','songs.author_id','songs.genre_id','songs.begin','orders.pos_id'])
+            ->orderBy('pos_id', 'desc')
+            ->get(['songs.id', 'orders.id as orderId','songs.name','songs.author_id','authors.name as author','songs.genre_id','songs.begin','orders.pos_id'])
             ->toArray();
     }
 

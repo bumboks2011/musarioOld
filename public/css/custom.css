@@ -1,0 +1,12 @@
+/* Dropdown menu background color*/
+
+.navbar-nav > li > .dropdown-menu-right {     background-color: #343a40;  }
+
+/* Dropdown menu font color*/
+
+.navbar-nav > li > .dropdown-menu a{   color: #9A9DA0;  }
+.navbar-nav > li > .dropdown-menu a:hover{   color: #f8f9fa;  background-color: #343a40; }
+
+.w41 {
+    width: 41% !important;
+}

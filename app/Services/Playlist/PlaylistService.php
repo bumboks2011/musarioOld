@@ -27,7 +27,11 @@ class PlaylistService implements PlaylistServiceInterface
 
     public function delete($data)
     {
-        return $this->playlistRepository->delete($data->id);
+        if ($this->playlistRepository->delete($data->id)) {
+            return $this->getAll($data);
+        } else {
+            return false;
+        }
     }
 
     public function getAll($data)

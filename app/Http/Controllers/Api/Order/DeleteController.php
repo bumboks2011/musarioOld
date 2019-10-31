@@ -18,6 +18,6 @@ class DeleteController extends Controller
      */
     public function __invoke(DeleteOrder $request, OrderService $service)
     {
-        return response()->json(['order'=> $service->deleteOrder($request)], 200);
+        return response()->json($service->deleteOrder($request), 200);
     }
 }

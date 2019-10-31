@@ -24,8 +24,9 @@ class PlaylistRepository implements PlaylistRepositoryInterface
     {
         $this->playlist->user_id = $user_id;
         $this->playlist->name = $name;
+        $this->playlist->save();
 
-        return $this->playlist->save();
+        return ['id' => $this->playlist->id, 'name' => $this->playlist->name];
     }
 
     public function update($id, $name)
