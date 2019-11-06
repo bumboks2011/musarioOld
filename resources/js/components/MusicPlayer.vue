@@ -68,7 +68,7 @@
             </div>
             <div class="btn-group bg-dark rounded h-100" role="group" aria-label="Basic example">
                 <button type="button" class="btn btn-dark" v-on:click="direct = !direct">
-                    <i class="fas fa-reply-all" v-if="direct"></i>
+                    <i class="fas fa-sync-alt" v-if="direct"></i>
                     <i class="fas fa-reply" v-else></i>
                 </button>
             </div>
@@ -220,16 +220,22 @@
             },
             nextSong(){
                 var active;
-                for (var i = 0; i < this.list.length; i++) {
-                    if (this.list[i].id == this.active) {
-                        active = i + 1;
-                        break;
+                if (this.direct == true) {
+                    for (var i = 0; i < this.list.length; i++) {
+                        if (this.list[i].id == this.active) {
+                            active = i;
+                            break;
+                        }
                     }
-                }
-                if (active == this.list.length) {
-                    active = 0;
-                    if (this.direct == true) {
-                        this.nextPlaylist();
+                } else {
+                    for (var i = 0; i < this.list.length; i++) {
+                        if (this.list[i].id == this.active) {
+                            active = i + 1;
+                            break;
+                        }
+                    }
+                    if (active == this.list.length) {
+                        active = 0;
                     }
                 }
 
@@ -247,9 +253,6 @@
                 }
                 if (active < 0) {
                     active = this.list.length - 1;
-                    if (this.direct == true) {
-                        this.prevPlaylist();
-                    }
                 }
                 this.name = this.list[active].name;
                 this.playSong(this.list[active].id);
@@ -450,8 +453,6 @@
         },
         mounted(){
             this.getPlayList();
-
-            //this.getSongList();
 
             this.getAuthor();
             this.getStyle();

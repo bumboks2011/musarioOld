@@ -2,9 +2,11 @@
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
     <head>
         <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <title>Laravel</title>
+        <title>Musario</title>
+        <link rel="icon" type="image/png" href="/pic/favicon.png">
 
         <!-- Fonts -->
         <link href="https://fonts.googleapis.com/css?family=Nunito:200,600" rel="stylesheet">
@@ -14,7 +16,9 @@
             html, body {
                 background-color: #fff;
                 /*background-image: url('https://wallpaperplay.com/walls/full/3/1/b/71356.jpg');*/
-                background-image: url('https://get.wallhere.com/photo/night-abstract-symmetry-light-lighting-line-darkness-screenshot-computer-wallpaper-179404.jpg');
+                /*background-image: url('https://get.wallhere.com/photo/night-abstract-symmetry-light-lighting-line-darkness-screenshot-computer-wallpaper-179404.jpg');*/
+                /*background-image: url('https://wallpapercave.com/wp/wp659383.jpg');*/
+                background-image: url('/pic/land1.png');
                 background-position: center;
                 background-repeat: no-repeat;
                 background-size: cover;
