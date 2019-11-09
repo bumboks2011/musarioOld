@@ -1,13 +1,31 @@
 <style>
-    /*col-sm-12 col-md-5*/
-    .cover-label {
-        width: 41% !important;
+    .toastify {
+        display: flex;
+        flex-direction: column-reverse;
+        align-items: flex-end;
+        position: fixed;
+        right: 15px;
+        bottom: 0;
+        width: auto;
+        height: auto;
+        z-index: 9999;
+    }
+
+    .slide-fade-enter-active {
+        transition: all .3s ease;
+    }
+    .slide-fade-leave-active {
+        transition: all .8s cubic-bezier(1.0, 0.5, 0.8, 1.0);
+    }
+    .slide-fade-enter, .slide-fade-leave-to {
+        transform: translateX(10px);
+        opacity: 0;
     }
 </style>
 <template>
     <div>
         <div id="playlist">
-            <img src="pic/cover.jpg" id="coverPicture" class="rounded float-left col-md-12 pr-0 col-lg-5 pr-lg-2 pl-0" alt="cover">
+            <img src="pic/cover.jpg" id="coverPicture" class="rounded float-left w41 pr-2" alt="cover">
             <h1 v-if="!editPlaylistName"> <span @click="editPlaylistName = true">{{ playlistName }}</span></h1>
             <div v-else class="input-group mb-3 col-7 col-sm-7">
                 <input type="text" class="form-control" placeholder="Enter new playlist name" v-model="playlistName">
@@ -25,7 +43,7 @@
             </div>-->
 
             <div class="float-left p-1" v-for="item in playlists" style="font-size: 18px;">
-                <a class="badge badge-pill badge-dark text-white p-2" @click="id = item.id; playlistName = item.name; getSongList();"  v-model="item.id">{{ item.name }}</a>
+                <a class="badge badge-pill badge-dark text-white p-2" @click="id = item.id; playlistName = item.name;"  v-model="item.id">{{ item.name }}</a>
             </div>
 
             <div class="float-left p-1" style="font-size: 18px;">
@@ -81,19 +99,17 @@
         </div>
         <div id="list">
             <ul class="list-group">
-                <draggable v-model="list" group="music" @end="onEnd">
-                    <li v-for="(item, index) in list" v-bind:value="item.name" class="clearfix list-group-item list-group-item-action">
-                        <span @click="name = item.name; playSong(item.id); active = item.id;">
-                            <i class="fas fa-pause pr-3" v-if="active == item.id"></i>
-                            <i class="fas fa-play pr-3" v-else></i>
-                        </span>
-                        {{ item.name }}
-                        <!--<a href="#" class="badge badge-pill badge-dark">{{ item.style }}</a>-->
-                        <a href="#" class="badge badge-pill badge-dark">{{ item.author }}</a>
-                        <i class="fas fa-trash float-right" @click="deleteSong(item.orderId)"></i>
-                        <i class="fas fa-pen float-right pr-3" @click="openModal(item)" data-toggle="modal" data-target="#editModal"></i>
-                    </li>
-                </draggable>
+                <li v-for="(item, index) in list" v-bind:value="item.name" class="clearfix list-group-item list-group-item-action">
+                    <span @click="name = item.name; playSong(item.id); active = item.id;">
+                        <i class="fas fa-pause pr-3" v-if="active == item.id"></i>
+                        <i class="fas fa-play pr-3" v-else></i>
+                    </span>
+                    {{ item.name }}
+                    <!--<a href="#" class="badge badge-pill badge-dark">{{ item.style }}</a>-->
+                    <a href="#" class="badge badge-pill badge-dark">{{ item.author }}</a>
+                    <i class="fas fa-plus float-right" @click="addSong(item.id)"></i>
+                    <i class="fas fa-pen float-right pr-3" @click="openModal(item)" data-toggle="modal" data-target="#editModal"></i>
+                </li>
             </ul>
             <!-- Modal -->
             <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
@@ -145,15 +161,28 @@
                     </div>
                 </div>
             </div>
+            <transition name="slide-fade">
+                <div class="toastify" v-if="successTify">
+                    <div class="alert alert-success">
+                        <i class="far fa-check-circle fa-4x"></i>
+                    </div>
+                </div>
+            </transition>
+            <transition name="slide-fade">
+                <div class="toastify" v-if="alertTify">
+                    <div class="alert alert-danger">
+                        <i class="fas fa-times fa-4x"></i>
+                    </div>
+                </div>
+            </transition>
         </div>
     </div>
 </template>
 
 <script>
-    import draggable from 'vuedraggable';
     export default {
         components: {
-            draggable,
+
         },
         props: [
 
@@ -189,6 +218,9 @@
                 playlistName: '',
                 editPlaylistName: false,
                 addPlaylistName: '',
+
+                successTify: false,
+                alertTify: false,
             }
         },
         methods:{
@@ -271,52 +303,32 @@
 
 
             ////// List
-            onEnd(evt) {
-                var itemEl = evt.item;
-                this.changePos(evt.newIndex);  // element's new index within new parent
-            },
-            getSongList(id = this.id){
+            getSongList(){
                 axios
-                    .get('api/orders/' + id)
+                    .get('api/songs')
                     .then(response => {
-                        this.list = this.sortList(0, response.data, [], this);
-                        //console.log(this.list);
+                        this.list = response.data;
+                        console.log(this.list);
                     })
                     .catch(error => console.log(error));
             },
-            sortList(next, mas, sorted, then) {
-                mas.forEach(function(item, i, arr) {
-                    if (item.pos_id === next) {
-                        sorted[sorted.length] = item;
-                        then.sortList(item.orderId, arr, sorted, then);
-                    }
-                });
-                return sorted;
-            },
-            changePos(change){
-                var id = this.list[change].orderId,
-                    next = change - 1;
-                if (next < 0) {
-                    next = 0;
-                } else {
-                    next = this.list[next].orderId;
-                }
+            addSong(id){
                 axios
-                    .put('api/orders/' + id, {next: next})
+                    .post('api/orders/' + this.id,{song: id})
                     .then(response => {
                         if(response.data === true) {
-                            //this.getSongList();
-                        } else {
+                            this.alertNotify();
                             this.getSongList();
-                            alert('Change position error!');
+                        } else {
+                            this.alertNotify(false);
                         }
                     })
                     .catch(error => console.log(error));
             },
-            deleteSong(id){
+            /*deleteSong(id){
                 if (confirm("Are you sure?")) {
                     axios
-                        .delete('api/orders/' + id)
+                        .delete('api/songs/' + id)
                         .then(response => {
                             if(response.data === true) {
                                 this.getSongList();
@@ -326,7 +338,7 @@
                         })
                         .catch(error => console.log(error));
                 }
-            },
+            },*/
             getAuthor(){
                 axios
                     .get('api/authors')
@@ -416,7 +428,7 @@
                         if (stretch === false) {
                             this.playlistName = response.data[0]['name'];
                             this.id = response.data[0]['id'];
-                            this.getSongList(response.data[0]['id']);
+                            this.getSongList();
                         }
                     })
                     .catch(error => console.log(error));
@@ -460,23 +472,17 @@
                     })
                     .catch(error => console.log(error));
             },
-            nextPlaylist(){
-                console.log('sss');
-                this.activePlaylist += 1;
-                if (this.activePlaylist == this.playlists.length) {
-                    this.activePlaylist = 0;
+
+            //UI
+            alertNotify(type = true, delay = 1500){
+                if (type) {
+                    this.successTify = true;
+                    setTimeout(() => {this.successTify = false},delay);
+                } else {
+                    this.alertTify = false;
+                    setTimeout(() => {this.alertTify = false},delay);
                 }
-                this.id = this.playlists[this.activePlaylist]['id'];
-                this.getSongList();
             },
-            prevPlaylist(){
-                this.activePlaylist--;
-                if (this.activePlaylist < 0) {
-                    this.activePlaylist = this.playlists.length - 1;
-                }
-                this.id = this.playlists[this.activePlaylist]['id'];
-                this.getSongList();
-            }
         },
         mounted(){
             this.getPlayList();

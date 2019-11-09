@@ -61,7 +61,13 @@
                                 <a class="nav-link" href="{{ route('list') }}">List</a>
                             </li>
                             <li class="nav-item">
+                                <a class="nav-link" href="{{ route('library') }}">Library</a>
+                            </li>
+                            <li class="nav-item">
                                 <a class="nav-link" href="{{ route('upload') }}">Upload</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ route('uptube') }}">UpTube</a>
                             </li>
                             <li class="nav-item dropdown">
                                 <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>

@@ -20,10 +20,20 @@ class SongService implements SongServiceInterface
     public function create($data)
     {
         $songs = [];
-        foreach ($data->music as $item) {
-            $id = $this->songRepository->create($data->user()->id, substr($item->getClientOriginalName(), 0, -4), $data->playlist_id, $data->author_id, $data->genre_id);
-            $uploaded = $this->fileService->upload($item, $id . '.mp3');
-            $songs[] = ['id' => $id , 'uploaded' => $uploaded];
+        if(empty($data->url)) {
+            foreach ($data->music as $item) {
+                $id = $this->songRepository->create($data->user()->id, substr($item->getClientOriginalName(), 0, -4), $data->playlist_id, $data->author_id, $data->genre_id);
+                $uploaded = $this->fileService->upload($item, $id . '.mp3');
+                $songs[] = ['id' => $id, 'uploaded' => $uploaded];
+            }
+        } else {
+            $initial = $this->fileService->initiateDownload($data->url);
+            if(empty($initial['filename'])) {
+                return false;
+            }
+            $id = $this->songRepository->create($data->user()->id, $initial['name'], $data->playlist_id, $data->author_id, $data->genre_id);
+            $initial = $this->fileService->endDownload($id,$initial['filename']);
+            $songs[] = ['id' => $id, 'uploaded' => $initial];
         }
         return $songs;
     }

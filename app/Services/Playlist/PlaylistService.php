@@ -4,15 +4,18 @@
 namespace App\Services\Playlist;
 
 
+use App\Repositories\Order\OrderRepository;
 use App\Repositories\Playlist\PlaylistRepository;
 
 class PlaylistService implements PlaylistServiceInterface
 {
     private $playlistRepository;
+    private $orderRepository;
 
-    public function __construct(PlaylistRepository $playlist)
+    public function __construct(PlaylistRepository $playlist, OrderRepository $order)
     {
         $this->playlistRepository = $playlist;
+        $this->orderRepository = $order;
     }
 
     public function create($data)
@@ -27,8 +30,12 @@ class PlaylistService implements PlaylistServiceInterface
 
     public function delete($data)
     {
-        if ($this->playlistRepository->delete($data->id)) {
-            return $this->getAll($data);
+        if (!$this->orderRepository->getOrderByPlaylist($data->id)) {
+            if ($this->playlistRepository->delete($data->id)) {
+                return $this->getAll($data);
+            } else {
+                return false;
+            }
         } else {
             return false;
         }

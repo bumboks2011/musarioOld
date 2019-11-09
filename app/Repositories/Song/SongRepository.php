@@ -24,16 +24,13 @@ class SongRepository implements SongRepositoryInterface
         $this->order = $order;
     }
 
-    public function create($userId, $name, $playlistId, $authorId = null, $genreId = null)
+    public function create($userId, $name, $playlistId, $authorId = 1, $genreId = 1)
     {
         $id = $this->song->query()->create(['user_id' => $userId, 'name' => $name, 'author_id' => $authorId, 'genre_id' => $genreId])->id;
-        $lastPosId = $this->order->where('playlist_id','=', $playlistId)->orderBy('pos_id','DESC')->value('pos_id');
-        if ($lastPosId) {
-            $lastPosId++;
-        } else {
-            $lastPosId = 1;
-        }
-        $this->order->query()->create(['song_id' => $id, 'playlist_id' => $playlistId, 'pos_id' => $lastPosId]);
+        $lastOrderId = $this->order->where('playlist_id','=', $playlistId)->where('pos_id', '=', 0)->value('id');
+        $orderId = $this->order->query()->create(['song_id' => $id, 'playlist_id' => $playlistId, 'pos_id' => 0])->id;
+        $this->order->where('id', '=', $lastOrderId)->update(['pos_id' => $orderId]);
+
         return $id;
     }
 

@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests\Api\Order;
 
-use App\Models\Playlist;
+use App\Models\Order;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateOrder extends FormRequest
@@ -14,13 +14,11 @@ class UpdateOrder extends FormRequest
      */
     public function authorize()
     {
-        $playlist = Playlist::find($this->playlist_id);
-
-        if (!$playlist) {
+        $order = Order::find($this->id);
+        if (!$order) {
             abort(404);
         }
-
-        return $playlist->user_id == $this->user()->id;
+        return $order->playlist->user_id == $this->user()->id;
     }
 
     /**
@@ -31,9 +29,7 @@ class UpdateOrder extends FormRequest
     public function rules()
     {
         return [
-            'playlist_id' => ['required'],
-            'action' => ['required','max:255'],
-            //'id' => ['required','exists:orders,pos_id'],
+            'next' => ['required','numeric'],
         ];
     }
 }

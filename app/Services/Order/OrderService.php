@@ -34,14 +34,13 @@ class OrderService implements OrderServiceInterface
         }
     }
 
+    public function createOrder($data)
+    {
+        return $this->orderRepository->createOrder($data->id, $data->song);
+    }
+
     public function changePosId($data)
     {
-        if ($data->action == 'up') {
-            $direction = '>';
-        } else {
-            $direction = '<';
-        }
-
-        return $this->orderRepository->changePosId($direction, $data->id, $data->playlist_id);
+        return $this->orderRepository->changePosId($data->id, $data->next);
     }
 }

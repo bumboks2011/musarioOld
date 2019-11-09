@@ -44,6 +44,7 @@ Route::group(['namespace' => 'Api'], function () {
     });
     Route::group(['namespace' => 'Order', 'prefix' => 'orders'], function () {
         Route::get('/{id}', 'GetController')->middleware('auth:api');
+        Route::post('/{id}', 'CreateController')->middleware('auth:api');
         Route::put('/{id}', 'UpdateController')->middleware('auth:api');
         Route::delete('/{id}', 'DeleteController')->middleware('auth:api');
     });

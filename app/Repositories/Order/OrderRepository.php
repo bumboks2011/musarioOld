@@ -34,52 +34,28 @@ class OrderRepository implements OrderRepositoryInterface
     public function deleteOrderById($id)
     {
         $order = $this->order->find($id);
+        $this->order->where('playlist_id', '=', $order->playlist_id)->where('pos_id', '=', $id)->update(['pos_id' => $order->pos_id]);
         $songId = $order->song_id;
         $order->delete();
         return $songId;
     }
 
-    public function changePosId($direction,$posId, $playlistId)
+    public function changePosId($orderId, $nextId)
     {
-        /*
-         * TODO
-         *  I tried to pass the second argument for sorting,
-         *  but regardless of the value passed, sorting in descending order is performed if the second element is passed.
-         *  "https://github.com/jarektkaczyk/eloquence/issues/94"
-         *  "https://github.com/laravel/framework/issues/22899"
-         *  "https://github.com/laravel/ideas/issues/1001"
-        */
+        $order = $this->order->find($orderId);
+        $this->order->where('playlist_id', '=', $order->playlist_id)->where('pos_id', '=', $orderId)->update(['pos_id' => $order->pos_id]);
+        $this->order->where('playlist_id', '=', $order->playlist_id)->where('pos_id', '=', $nextId)->update(['pos_id' => $orderId]);
+        $order->pos_id = $nextId;
+        $order->save();
 
-        if ($direction == '>') {
-            $song = $this->order
-                ->where('playlist_id', '=', $playlistId)
-                ->where('pos_id', $direction, $posId)
-                ->orderBy('pos_id')
-                ->first();
-        } else {
-            $song = $this->order
-                ->where('playlist_id', '=', $playlistId)
-                ->where('pos_id', $direction, $posId)
-                ->orderBy('pos_id', 'DESC')
-                ->first();
-        }
+        return true;
+    }
 
-        if(!$song) {
-            return false;
-        }
-
-        $posTmp = $song->pos_id;
-        $idTmp = $song->id;
-        $song->pos_id = $posId;
-        $song->save();
-
-        $song = $this->order
-            ->where('playlist_id', '=', $playlistId)
-            ->where('pos_id', '=', $posId)
-            ->where('id', '!=', $idTmp)
-            ->first();
-        $song->pos_id = $posTmp;
-        $song->save();
+    public function createOrder($playlistId, $songId)
+    {
+        $lastOrderId = $this->order->where('playlist_id','=', $playlistId)->where('pos_id', '=', 0)->value('id');
+        $orderId = $this->order->query()->create(['song_id' => $songId, 'playlist_id' => $playlistId, 'pos_id' => 0])->id;
+        $this->order->where('id', '=', $lastOrderId)->update(['pos_id' => $orderId]);
 
         return true;
     }

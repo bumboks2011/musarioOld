@@ -54,19 +54,8 @@
         <h1>Upload</h1>
         <hr>
         <div v-if="!uploadAnim">
-            <p class="pt-2 mb-0">Files</p>
-            <input type="file" id="files" ref="files" multiple v-on:change="handleFilesUpload()"/>
-
-            <div class="large-12 medium-12 small-12 cell">
-                <ul class="list-group">
-                    <li v-for="(file, key) in files" class="clearfix list-group-item list-group-item-action file-listing">{{ file.name }} <span class="remove-file" v-on:click="removeFile( key )">Remove</span></li>
-                </ul>
-            </div>
-            <br>
-            <div class="large-12 medium-12 small-12 cell">
-                <button class="btn btn-dark" v-on:click="addFiles()">Add Files</button>
-            </div>
-            <br>
+            <p class="pt-2 mb-0">URL</p>
+            <input type="text" class="form-control" placeholder="Paste video URL" v-model="url">
 
             <p class="pt-2 mb-0">Playlist</p>
             <select class="custom-select" v-model="playlist" name="playlist">
@@ -145,6 +134,7 @@
             return {
                 playlistArray: [],
                 playlist: 0,
+                url: '',
                 authorArray: [],
                 author: 0,
                 editAuthor: false,
@@ -165,11 +155,7 @@
                 this.spinner = true;
                 let formData = new FormData();
 
-                for( var i = 0; i < this.files.length; i++ ){
-                    let file = this.files[i];
-
-                    formData.append('music[' + i + ']', file);
-                }
+                formData.append('url', this.url);
                 formData.append('playlist_id', this.playlist);
                 formData.append('author_id', this.author);
                 formData.append('genre_id', this.style);
@@ -191,21 +177,8 @@
                     console.log(error);
                     this.spinner = false;
                     this.completeUpload = false;
-                    setTimeout(window.location.href = '/upload', 1000);
+                    setTimeout(window.location.href = '/uptube', 1000);
                 });
-            },
-            handleFilesUpload(){
-                let uploadedFiles = this.$refs.files.files;
-
-                for( var i = 0; i < uploadedFiles.length; i++ ){
-                    this.files.push( uploadedFiles[i] );
-                }
-            },
-            addFiles(){
-                this.$refs.files.click();
-            },
-            removeFile( key ){
-                this.files.splice( key, 1 );
             },
 
             getPlayList(){

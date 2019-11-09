@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Http\Requests\Api\Auth;
+namespace App\Http\Requests\Api\Order;
 
+use App\Models\Playlist;
 use Illuminate\Foundation\Http\FormRequest;
 
-class RegisterFormRequest extends FormRequest
+class CreateOrder extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -13,7 +14,13 @@ class RegisterFormRequest extends FormRequest
      */
     public function authorize()
     {
-        return true;
+        $playlist = Playlist::find($this->id);
+
+        if (!$playlist) {
+            abort(404);
+        }
+
+        return $playlist->user_id == $this->user()->id;
     }
 
     /**
@@ -24,9 +31,7 @@ class RegisterFormRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-            'password' => ['required', 'string', 'min:6'],
+            'song' => ['exists:songs,id'],
         ];
     }
 }
