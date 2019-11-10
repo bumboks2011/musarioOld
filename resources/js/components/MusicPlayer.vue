@@ -273,7 +273,9 @@
             ////// List
             onEnd(evt) {
                 var itemEl = evt.item;
-                this.changePos(evt.newIndex);  // element's new index within new parent
+                if (evt.newIndex !== evt.oldIndex) {
+                    this.changePos(evt.newIndex);  // element's new index within new parent
+                }
             },
             getSongList(id = this.id){
                 axios
