@@ -14,7 +14,8 @@
         "laravel/framework": "5.8.*",
         "laravel/passport": "^7.5",
         "laravel/tinker": "^1.0",
-        "norkunas/youtube-dl-php": "^1.4"
+        "norkunas/youtube-dl-php": "^1.4",
+        "simplehtmldom/simplehtmldom": "dev-master"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.2",

@@ -173,6 +173,7 @@
                 formData.append('playlist_id', this.playlist);
                 formData.append('author_id', this.author);
                 formData.append('genre_id', this.style);
+                formData.append('type', 'upload');
                 axios.post( 'api/songs',
                     formData,
                     {

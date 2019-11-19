@@ -67,4 +67,14 @@ class HomeController extends Controller
         return view('uptube');
     }
 
+    /**
+     * Show the application dashboard.
+     *
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function search()
+    {
+        return view('search');
+    }
+
 }

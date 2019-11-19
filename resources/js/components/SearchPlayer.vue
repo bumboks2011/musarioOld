@@ -1,5 +1,4 @@
 <style>
-
     .pointed {
         cursor: pointer;
     }
@@ -17,6 +16,10 @@
         z-index: 9999;
     }
 
+    .hiden {
+        display: none !important;
+    }
+
     .slide-fade-enter-active {
         transition: all .3s ease;
     }
@@ -31,7 +34,7 @@
 <template>
     <div>
         <div id="playlist">
-            <img src="pic/cover2.png" id="coverPicture" class="rounded float-left col-md-12 pr-0 col-lg-5 pr-lg-2 pl-0" alt="cover">
+            <img src="pic/cover.png" id="coverPicture" class="rounded float-left col-md-12 pr-0 col-lg-5 pr-lg-2 pl-0" alt="cover">
             <h1 v-if="!editPlaylistName"> <span @click="editPlaylistName = true">{{ playlistName }}</span></h1>
             <div v-else class="input-group mb-3 col-7 col-sm-7">
                 <input type="text" class="form-control" placeholder="Enter new playlist name" v-model="playlistName">
@@ -40,13 +43,6 @@
                     <button type="button" class="btn btn-dark" @click="removePlayList(id,playlistName); editPlaylistName = false">delete</button>
                 </div>
             </div>
-
-            <!--<button type="button" class="btn btn-dark dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                {{ playlistName }}
-            </button>
-            <div class="dropdown-menu">
-                <a class="dropdown-item" @click="id = item.id; name = item.name; getSongList();" v-for="item in playlists" v-model="item.id">{{ item.name }}</a>
-            </div>-->
 
             <div class="float-left p-1" v-for="item in playlists" style="font-size: 18px;">
                 <a class="badge badge-pill badge-dark text-white p-2 pointed" @click="id = item.id; playlistName = item.name;"  v-model="item.id">{{ item.name }}</a>
@@ -81,7 +77,7 @@
         </div>
         <br>
 
-        <div class="d-inline-flex bg-dark rounded w-100" id="player">
+        <div class="d-inline-flex bg-dark rounded w-100" id="player" v-if="playerVisible">
             <div class="btn-group bg-dark rounded h-100" role="group" aria-label="Basic example">
                 <button type="button" class="btn btn-dark" v-on:click="prevSong()"><</button>
                 <button type="button" class="btn btn-dark" v-on:click="play = !play; update();  play ? audio.play() : audio.pause()"><span v-if="play">||</span><span v-else>&#9658;</span></button>
@@ -103,85 +99,50 @@
                 </button>
             </div>
         </div>
-        <div id="list">
-            <ul class="list-group">
-                <li v-for="(item, index) in list" v-bind:value="item.name" class="clearfix list-group-item list-group-item-action">
-                    <span @click="name = item.name; playSong(item.id); active = item.id;">
-                        <i class="fas fa-pause pr-3" v-if="active == item.id"></i>
-                        <i class="fas fa-play pr-3" v-else></i>
-                    </span>
-                    {{ item.name }}
-                    <!--<a href="#" class="badge badge-pill badge-dark">{{ item.style }}</a>-->
-                    <!--<a href="#" class="badge badge-pill badge-dark">{{ item.author }}</a>-->
-                    <i class="fas fa-plus float-right pointed" @click="addSong(item.id)"></i>
-                    <i class="fas fa-pen float-right pr-3 pointed" @click="openModal(item)" data-toggle="modal" data-target="#editModal"></i>
-                </li>
-            </ul>
-            <!-- Modal -->
-            <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered" role="document">
-                    <div class="modal-content bg-dark">
-                        <div class="modal-header">
-                            <h5 class="modal-title text-white" id="editModalLabel">Edit song</h5>
-                            <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                        <div class="modal-body bg-white">
-                            <div class="input-group mb-0">
-                                <input type="text" class="form-control" placeholder="Enter new song name" v-model="editname">
-                            </div>
 
-                            <p class="pt-2 mb-0">Author <a class="badge badge-pill badge-dark text-white" @click="editAuthor = true">+</a></p>
-                            <div v-if="editAuthor" class="input-group mb-3">
-                                <input type="text" class="form-control" placeholder="Enter new author name" v-model="authorName">
-                                <div class="input-group-append">
-                                    <button type="button" class="btn btn-dark" @click="editAuthor = false; addAuthor();">add</button>
-                                </div>
-                            </div>
-                            <select class="custom-select" v-model="author" name="author">
-                                <option v-for="item in authorArray" v-bind:value="item.id">
-                                    {{ item.name }}
-                                </option>
-                            </select>
-
-                            <p class="pt-2 mb-0">Style
-                                <a class="badge badge-pill badge-dark text-white" @click="editStyle = true">+</a>
-                                <a class="badge badge-pill badge-dark text-white" @click="autoStyle()">find</a>
-                            </p>
-                            <div v-if="editStyle" class="input-group mb-3">
-                                <input type="text" class="form-control" placeholder="Enter new style name" v-model="styleName">
-                                <div class="input-group-append">
-                                    <button type="button" class="btn btn-dark" @click="editStyle = false; addStyle();">add</button>
-                                </div>
-                            </div>
-                            <select class="custom-select" v-model="style" name="style">
-                                <option v-for="item in styleArray" v-bind:value="item.id">
-                                    {{ item.name }}
-                                </option>
-                            </select>
-                        </div>
-                        <div class="modal-footer bg-white">
-                            <button type="button" class="btn btn-dark col-sm-12" data-dismiss="modal" @click="editSong()">save</button>
-                        </div>
-                    </div>
+        <div class="pt-2">
+            <div class="input-group mb-3">
+                <input type="text" class="form-control" placeholder="Author - song name" aria-describedby="button-addon2" v-model="search">
+                <div class="input-group-append">
+                    <button class="btn btn-dark" type="button" id="button-addon2" @click="searchSong">Search</button>
                 </div>
             </div>
-            <transition name="slide-fade">
-                <div class="toastify" v-if="successTify">
-                    <div class="alert alert-success">
-                        <i class="far fa-check-circle fa-4x"></i>
-                    </div>
-                </div>
-            </transition>
-            <transition name="slide-fade">
-                <div class="toastify" v-if="alertTify">
-                    <div class="alert alert-danger">
-                        <i class="fas fa-times fa-4x"></i>
-                    </div>
-                </div>
-            </transition>
         </div>
+        <div class="text-center" v-if="isSearch">
+            <div class="spinner-border align-center" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+        </div>
+        <div id="list" v-else>
+            <ul class="list-group">
+                <li v-for="(item, index) in list" v-bind:value="item.name" class="clearfix list-group-item list-group-item-action">
+                    <span @click="name = item.name; playSong(item.id, index); active = item.id;">
+                        <i class="fas fa-pause pr-3 pointed" v-if="active == item.id"></i>
+                        <i class="fas fa-play pr-3 pointed" v-else></i>
+                    </span>
+                    {{ item.name }}
+                    <!--<a href="#" class="badge badge-pill badge-dark">{{ item.author }}</a>-->
+
+                    <i class="fas fa-plus float-right pointed" @click="addSong(index)"></i>
+                    <i class="fas fa-download float-right pr-3 pointed" @click="downloadSong(index)"></i>
+                </li>
+            </ul>
+        </div>
+
+        <transition name="slide-fade">
+            <div class="toastify" v-if="successTify">
+                <div class="alert alert-success">
+                    <i class="far fa-check-circle fa-4x"></i>
+                </div>
+            </div>
+        </transition>
+        <transition name="slide-fade">
+            <div class="toastify" v-if="alertTify">
+                <div class="alert alert-danger">
+                    <i class="fas fa-times fa-4x"></i>
+                </div>
+            </div>
+        </transition>
     </div>
 </template>
 
@@ -195,6 +156,9 @@
         ],
         data: function () {
             return {
+                playerVisible: false,
+                isSearch: false,
+                search: '',
                 play: false,
                 volume: false,
                 direct: false,
@@ -231,6 +195,47 @@
         },
         methods:{
             ///// Player
+            searchSong() {
+                this.list = [];
+                this.active = null;
+                this.isSearch = true;
+
+                axios
+                    .post('api/services/search',{name: this.search})
+                    .then(response => {
+                        if(response.data !== false) {
+                            this.playerVisible = true;
+                            this.list = response.data;
+
+                            console.log(response.data);
+                        } else {
+                            this.alertNotify(false);
+                        }
+                        this.isSearch = false;
+                    })
+                    .catch(error => {
+                        this.isSearch = false;
+                        this.alertNotify(false);
+                    });
+            },
+            async getLinkById(id) {
+                var linkos = '';
+                await axios
+                    .post('api/services/id',{id: id})
+                    .then(response => {
+                        if(response.data !== false) {
+                            linkos = response.data;
+                        } else {
+                            this.alertNotify(false);
+                        }
+                        this.isSearch = false;
+                    })
+                    .catch(error => {
+                        this.isSearch = false;
+                        this.alertNotify(false);
+                    });
+                return linkos;
+            },
             update(){
                 //this.$forceUpdate();
                 this.time = this.audio.currentTime;
@@ -250,9 +255,14 @@
                     alert('Sorry! Your browser not support '+this.type.join(','));
                 }
             },
-            playSong(id){
+            async playSong(id, index){
                 if(id != this.active){
-                    this.audio.src = this.path + id + '.' + this.type;
+                    if (this.list[index].link === null) {
+                        this.audio.src = await this.getLinkById(id);
+                        this.list[index].link = this.audio.src;
+                    } else {
+                        this.audio.src = this.list[index].link;
+                    }
                     this.play = true;
                     this.audio.play();
                     this.findCover(this.name);
@@ -288,7 +298,7 @@
                 }
 
                 this.name = this.list[active].name;
-                this.playSong(this.list[active].id);
+                this.playSong(this.list[active].id, active);
                 this.active = this.list[active].id;
             },
             prevSong(){
@@ -303,123 +313,71 @@
                     active = this.list.length - 1;
                 }
                 this.name = this.list[active].name;
-                this.playSong(this.list[active].id);
+                this.playSong(this.list[active].id, active);
                 this.active = this.list[active].id;
             },
 
 
             ////// List
-            getSongList(){
-                axios
-                    .get('api/songs')
-                    .then(response => {
-                        this.list = response.data;
-                        console.log(this.list);
+            async downloadSong(index){
+                var link = this.list[index].link === null ? await this.getLinkById(this.list[index].id) : this.list[index].link;
+                fetch(link)
+                    .then(resp => resp.blob())
+                    .then(blob => {
+                        const url = window.URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.style.display = 'none';
+                        a.href = url;
+                        // the filename you want
+                        a.download = this.list[index].name + '.' + this.type;
+                        document.body.appendChild(a);
+                        a.click();
+                        window.URL.revokeObjectURL(url);
+                        this.alertNotify(true);
                     })
-                    .catch(error => console.log(error));
+                    .catch(() => this.alertNotify(false));
             },
-            addSong(id){
-                axios
-                    .post('api/orders/' + this.id,{song: id})
-                    .then(response => {
-                        if(response.data === true) {
-                            this.alertNotify();
-                            this.getSongList();
-                        } else {
-                            this.alertNotify(false);
+
+            async addSong(index){
+                /*if (this.list[index].link === null) {
+                    let link = await this.getLinkById(this.list[index].id);
+                } else {
+                    let link = this.list[index].link;
+                }*/
+
+                let formData = new FormData();
+                formData.append('url', this.list[index].link === null ? await this.getLinkById(this.list[index].id) : this.list[index].link);
+                formData.append('name', this.list[index].name);
+                formData.append('playlist_id', this.id);
+                formData.append('author_id', '1');
+                //formData.append('author_id', this.list[index].author !== 0 ? await this.addAuthor(this.list[index].name) : this.list[index].author);
+                formData.append('genre_id', '1');
+                //formData.append('genre_id', 1 !== 0 ? await this.autoStyle(this.list[index].name) : this.list[index].author);
+                formData.append('type', 'url');
+                await axios.post( 'api/songs',
+                    formData,
+                    {
+                        headers: {
+                            'Content-Type': 'multipart/form-data'
                         }
-                    })
-                    .catch(error => console.log(error));
+                    }
+                ).then(response => {
+                    if (response.data !== false) {
+                        this.alertNotify(true);
+                    } else {
+                        this.alertNotify(false);
+                    }
+                })
+                .catch(error => {
+                    console.log(error);
+                    this.alertNotify(false);
+                });
             },
-            /*deleteSong(id){
-                if (confirm("Are you sure?")) {
-                    axios
-                        .delete('api/songs/' + id)
-                        .then(response => {
-                            if(response.data === true) {
-                                this.getSongList();
-                            } else {
-                                alert('Delete song error!');
-                            }
-                        })
-                        .catch(error => console.log(error));
-                }
-            },*/
-            getAuthor(){
-                axios
-                    .get('api/authors')
-                    .then(response => {
-                        this.authorArray = response.data;
-                        this.author = response.data['id'];
-                    })
-                    .catch(error => console.log(error));
-            },
-            getStyle(strip = false){
-                axios
-                    .get('api/genres')
-                    .then(response => {
-                        this.styleArray = response.data;
-                        if(strip === false) {
-                            this.style = response.data['id'];
-                        }
-                    })
-                    .catch(error => console.log(error));
-            },
-            addAuthor(){
-                axios
-                    .post('api/authors', {name: this.authorName})
-                    .then(response => {
-                        this.getAuthor();
-                        this.author = response.data['id'];
-                    })
-                    .catch(error => console.log(error));
-            },
-            addStyle(){
-                axios
-                    .post('api/genres', {name: this.styleName})
-                    .then(response => {
-                        this.getStyle();
-                        this.style = response.data['id'];
-                    })
-                    .catch(error => console.log(error));
-            },
-            openModal(edit){
-                this.editname = edit.name;
-                this.editid = edit.id;
-                this.author = edit.author_id;
-                this.style = edit.genre_id;
-            },
-            editSong(){
-                axios
-                    .put('api/songs/' + this.editid, {name: this.editname, author_id: this.author, genre_id: this.style})
-                    .then(response => {
-                        if(response.data === true) {
-                            this.getSongList();
-                        } else {
-                            alert('Edit song error!');
-                        }
-                    })
-                    .catch(error => console.log(error));
-            },
-            autoStyle(){
-                axios
-                    .post('api/services/genre', {name: this.editname})
-                    .then(response => {
-                        if (response.data !== false) {
-                            this.styleArray = this.getStyle(true);
-                            this.style = response.data;
-                        } else {
-                            alert('Auto style not found!');
-                        }
-                    })
-                    .catch(error => {
-                        console.log(error);
-                        alert('Auto style not found!');
-                    });
-            },
+
+            ///////// Playlist
             findCover(name){
                 axios
-                    .post('api/services/cover', {name: this.name})
+                    .post('api/services/cover', {name: name})
                     .then(response => {
                         if (response.data !== false) {
                             document.getElementById("coverPicture").src = response.data;
@@ -429,8 +387,6 @@
                         console.log(error);
                     });
             },
-
-            ///////// Playlist
             getPlayList(stretch = false){
                 axios
                     .get('api/playlists')
@@ -440,7 +396,6 @@
                         if (stretch === false) {
                             this.playlistName = response.data[0]['name'];
                             this.id = response.data[0]['id'];
-                            this.getSongList();
                         }
                     })
                     .catch(error => console.log(error));
@@ -452,7 +407,6 @@
                         this.playlistName = name;
                         this.id = id;
                         this.getPlayList(true);
-                        //list.getSongList(json[0]['id']);
                     })
                     .catch(error => console.log(error));
             },
@@ -468,7 +422,6 @@
                             this.playlists = response.data;
                             this.playlistName = response.data[0]['name'];
                             this.id = response.data[0]['id'];
-                            this.getSongList(response.data[0]['id']);
                         })
                         .catch(error => console.log(error));
                 }
@@ -480,9 +433,30 @@
                         this.playlistName = response.data['name'];
                         this.id = response.data['id'];
                         this.getPlayList();
-                        this.getSongList(response.data['id']);
                     })
                     .catch(error => console.log(error));
+            },
+            addAuthor(name){
+                axios
+                    .post('api/authors', {name: name})
+                    .then(response => {
+                        return response.data['id'];
+                    })
+                    .catch(error => console.log(error));
+            },
+            autoStyle(name){
+                axios
+                    .post('api/services/genre', {name: name})
+                    .then(response => {
+                        if (response.data !== false) {
+                            return response.data;
+                        } else {
+                            return 1;
+                        }
+                    })
+                    .catch(error => {
+                        console.log(error);
+                    });
             },
 
             //UI
@@ -499,8 +473,8 @@
         mounted(){
             this.getPlayList();
 
-            this.getAuthor();
-            this.getStyle();
+            /*this.getAuthor();
+            this.getStyle();*/
 
             this.checkFormat();
             this.audio.src = this.path + 0 + '.' + this.type;

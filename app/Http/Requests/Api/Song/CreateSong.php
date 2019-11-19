@@ -28,7 +28,8 @@ class CreateSong extends FormRequest
     {
         return [
             'name' => ['max:255'],
-            'url' => ['max:255'],
+            'url' => ['max:4192'],
+            'type' => ['required','max:255'],
             'author_id' => ['exists:authors,id'],
             'genre_id' => ['exists:genres,id'],
             'playlist_id' => ['required','exists:playlists,id'],

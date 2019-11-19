@@ -51,7 +51,7 @@
 </style>
 <template>
     <div>
-        <h1>Upload</h1>
+        <h1>Download from YouTube</h1>
         <hr>
         <div v-if="!uploadAnim">
             <p class="pt-2 mb-0">URL</p>
@@ -159,6 +159,7 @@
                 formData.append('playlist_id', this.playlist);
                 formData.append('author_id', this.author);
                 formData.append('genre_id', this.style);
+                formData.append('type', 'uptube');
                 axios.post( 'api/songs',
                     formData,
                     {

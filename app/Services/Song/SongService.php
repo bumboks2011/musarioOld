@@ -5,6 +5,7 @@ namespace App\Services\Song;
 
 use App\Repositories\Song\SongRepository;
 use App\Services\File\FileService;
+use Illuminate\Support\Str;
 
 class SongService implements SongServiceInterface
 {
@@ -20,21 +21,38 @@ class SongService implements SongServiceInterface
     public function create($data)
     {
         $songs = [];
-        if(empty($data->url)) {
-            foreach ($data->music as $item) {
-                $id = $this->songRepository->create($data->user()->id, substr($item->getClientOriginalName(), 0, -4), $data->playlist_id, $data->author_id, $data->genre_id);
-                $uploaded = $this->fileService->upload($item, $id . '.mp3');
-                $songs[] = ['id' => $id, 'uploaded' => $uploaded];
-            }
-        } else {
-            $initial = $this->fileService->initiateDownload($data->url);
-            if(empty($initial['filename'])) {
+        switch ($data->type) {
+            case 'upload':
+                foreach ($data->music as $item) {
+                    $id = $this->songRepository->create($data->user()->id, substr($item->getClientOriginalName(), 0, -4), $data->playlist_id, $data->author_id, $data->genre_id);
+                    $uploaded = $this->fileService->upload($item, $id . '.mp3');
+                    $songs[] = ['id' => $id, 'uploaded' => $uploaded];
+                }
+                break;
+            case 'uptube':
+                $initial = $this->fileService->initiateDownload($data->url);
+                if (empty($initial['filename'])) {
+                    return false;
+                }
+                $id = $this->songRepository->create($data->user()->id, $initial['name'], $data->playlist_id, $data->author_id, $data->genre_id);
+                $initial = $this->fileService->endDownload($id,$initial['filename']);
+                $songs[] = ['id' => $id, 'uploaded' => $initial];
+                break;
+            case 'url':
+                $tmpName = Str::random(10);
+                $uploaded = $this->fileService->downloadByUrl($data->url, $tmpName);
+                if ($uploaded) {
+                    $id = $this->songRepository->create($data->user()->id, $data->name, $data->playlist_id, $data->author_id, $data->genre_id);
+                    $uploaded = $this->fileService->endDownloadByUrl($id, $tmpName);
+                    $songs[] = ['id' => $id, 'uploaded' => $uploaded];
+                } else {
+                    return false;
+                }
+                break;
+            default:
                 return false;
-            }
-            $id = $this->songRepository->create($data->user()->id, $initial['name'], $data->playlist_id, $data->author_id, $data->genre_id);
-            $initial = $this->fileService->endDownload($id,$initial['filename']);
-            $songs[] = ['id' => $id, 'uploaded' => $initial];
         }
+
         return $songs;
     }
 

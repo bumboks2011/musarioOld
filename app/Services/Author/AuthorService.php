@@ -16,13 +16,11 @@ class AuthorService implements AuthorServiceInterface
 
     public function create($data)
     {
-
         return $this->authorRepository->create($data->name);
     }
 
     public function getAll()
     {
-
         return $this->authorRepository->getAll();
     }
 }

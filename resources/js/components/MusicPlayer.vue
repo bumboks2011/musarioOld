@@ -1,13 +1,40 @@
 <style>
-    /*col-sm-12 col-md-5*/
-    .cover-label {
-        width: 41% !important;
+    .pointed {
+        cursor: pointer;
+    }
+
+    /*UI toast*/
+    .toastify {
+        display: flex;
+        flex-direction: column-reverse;
+        align-items: flex-end;
+        position: fixed;
+        right: 15px;
+        bottom: 0;
+        width: auto;
+        height: auto;
+        z-index: 9999;
+    }
+
+    .hiden {
+        display: none !important;
+    }
+
+    .slide-fade-enter-active {
+        transition: all .3s ease;
+    }
+    .slide-fade-leave-active {
+        transition: all .8s cubic-bezier(1.0, 0.5, 0.8, 1.0);
+    }
+    .slide-fade-enter, .slide-fade-leave-to {
+        transform: translateX(10px);
+        opacity: 0;
     }
 </style>
 <template>
     <div>
         <div id="playlist">
-            <img src="pic/cover.jpg" id="coverPicture" class="rounded float-left col-md-12 pr-0 col-lg-5 pr-lg-2 pl-0" alt="cover">
+            <img src="pic/cover3.png" id="coverPicture" class="rounded float-left col-md-12 pr-0 col-lg-5 pr-lg-2 pl-0" alt="cover">
             <h1 v-if="!editPlaylistName"> <span @click="editPlaylistName = true">{{ playlistName }}</span></h1>
             <div v-else class="input-group mb-3 col-7 col-sm-7">
                 <input type="text" class="form-control" placeholder="Enter new playlist name" v-model="playlistName">
@@ -25,11 +52,11 @@
             </div>-->
 
             <div class="float-left p-1" v-for="item in playlists" style="font-size: 18px;">
-                <a class="badge badge-pill badge-dark text-white p-2" @click="id = item.id; playlistName = item.name; getSongList();"  v-model="item.id">{{ item.name }}</a>
+                <a class="badge badge-pill badge-dark text-white p-2 pointed" @click="id = item.id; playlistName = item.name; getSongList();"  v-model="item.id">{{ item.name }}</a>
             </div>
 
             <div class="float-left p-1" style="font-size: 18px;">
-                <a class="badge badge-pill badge-dark text-white p-2" data-toggle="modal" data-target="#addModal">+</a>
+                <a class="badge badge-pill badge-dark text-white p-2 pointed" data-toggle="modal" data-target="#addModal">+</a>
             </div>
 
             <!-- Modal -->
@@ -84,14 +111,15 @@
                 <draggable v-model="list" group="music" @end="onEnd">
                     <li v-for="(item, index) in list" v-bind:value="item.name" class="clearfix list-group-item list-group-item-action">
                         <span @click="name = item.name; playSong(item.id); active = item.id;">
-                            <i class="fas fa-pause pr-3" v-if="active == item.id"></i>
-                            <i class="fas fa-play pr-3" v-else></i>
+                            <i class="fas fa-pause pr-3 pointed" v-if="active == item.id"></i>
+                            <i class="fas fa-play pr-3 pointed" v-else></i>
                         </span>
                         {{ item.name }}
                         <!--<a href="#" class="badge badge-pill badge-dark">{{ item.style }}</a>-->
-                        <a href="#" class="badge badge-pill badge-dark">{{ item.author }}</a>
-                        <i class="fas fa-trash float-right" @click="deleteSong(item.orderId)"></i>
-                        <i class="fas fa-pen float-right pr-3" @click="openModal(item)" data-toggle="modal" data-target="#editModal"></i>
+                        <!--<a href="#" class="badge badge-pill badge-dark">{{ item.author }}</a>-->
+                        <i class="fas fa-trash float-right pointed" @click="deleteSong(item.orderId)"></i>
+                        <i class="fas fa-pen float-right pr-3 pointed" @click="openModal(item)" data-toggle="modal" data-target="#editModal"></i>
+                        <i class="fas fa-download float-right pr-3 pointed" @click="downloadSong(index)"></i>
                     </li>
                 </draggable>
             </ul>
@@ -146,6 +174,21 @@
                 </div>
             </div>
         </div>
+
+        <transition name="slide-fade">
+            <div class="toastify" v-if="successTify">
+                <div class="alert alert-success">
+                    <i class="far fa-check-circle fa-4x"></i>
+                </div>
+            </div>
+        </transition>
+        <transition name="slide-fade">
+            <div class="toastify" v-if="alertTify">
+                <div class="alert alert-danger">
+                    <i class="fas fa-times fa-4x"></i>
+                </div>
+            </div>
+        </transition>
     </div>
 </template>
 
@@ -189,6 +232,10 @@
                 playlistName: '',
                 editPlaylistName: false,
                 addPlaylistName: '',
+
+                /*UI toast*/
+                successTify: false,
+                alertTify: false,
             }
         },
         methods:{
@@ -271,6 +318,23 @@
 
 
             ////// List
+            downloadSong(index){
+                fetch(this.path + this.list[index].id + '.' + this.type)
+                    .then(resp => resp.blob())
+                    .then(blob => {
+                        const url = window.URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.style.display = 'none';
+                        a.href = url;
+                        // the filename you want
+                        a.download = this.list[index].name + '.' + this.type;
+                        document.body.appendChild(a);
+                        a.click();
+                        window.URL.revokeObjectURL(url);
+                        this.alertNotify(true);
+                    })
+                    .catch(() => this.alertNotify(false));
+            },
             onEnd(evt) {
                 var itemEl = evt.item;
                 if (evt.newIndex !== evt.oldIndex) {
@@ -389,8 +453,12 @@
                 axios
                     .post('api/services/genre', {name: this.editname})
                     .then(response => {
-                        this.styleArray = this.getStyle(true);
-                        this.style = response.data;
+                        if (response.data !== false) {
+                            this.styleArray = this.getStyle(true);
+                            this.style = response.data;
+                        } else {
+                            alert('Auto style not found!');
+                        }
                     })
                     .catch(error => {
                         console.log(error);
@@ -399,9 +467,11 @@
             },
             findCover(name){
                 axios
-                    .post('api/services/cover', {name: this.name})
+                    .post('api/services/cover', {name: name})
                     .then(response => {
-                        document.getElementById("coverPicture").src = response.data;
+                        if (response.data !== false) {
+                            document.getElementById("coverPicture").src = response.data;
+                        }
                     })
                     .catch(error => {
                         console.log(error);
@@ -478,7 +548,18 @@
                 }
                 this.id = this.playlists[this.activePlaylist]['id'];
                 this.getSongList();
-            }
+            },
+
+            //UI
+            alertNotify(type = true, delay = 1500){
+                if (type) {
+                    this.successTify = true;
+                    setTimeout(() => {this.successTify = false},delay);
+                } else {
+                    this.alertTify = false;
+                    setTimeout(() => {this.alertTify = false},delay);
+                }
+            },
         },
         mounted(){
             this.getPlayList();

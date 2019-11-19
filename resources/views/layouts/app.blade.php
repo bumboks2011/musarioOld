@@ -64,6 +64,9 @@
                                 <a class="nav-link" href="{{ route('library') }}">Library</a>
                             </li>
                             <li class="nav-item">
+                                <a class="nav-link" href="{{ route('search') }}">Search</a>
+                            </li>
+                            <li class="nav-item">
                                 <a class="nav-link" href="{{ route('upload') }}">Upload</a>
                             </li>
                             <li class="nav-item">

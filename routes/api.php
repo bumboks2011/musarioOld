@@ -51,5 +51,7 @@ Route::group(['namespace' => 'Api'], function () {
     Route::group(['namespace' => 'Service', 'prefix' => 'services'], function () {
         Route::post('/cover', 'GetCoverController')->middleware('auth:api');
         Route::post('/genre', 'GetGenreController')->middleware('auth:api');
+        Route::post('/search', 'GetSearchListController')->middleware('auth:api');
+        Route::post('/id', 'GetIdController')->middleware('auth:api');
     });
 });

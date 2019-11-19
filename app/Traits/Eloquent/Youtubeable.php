@@ -25,11 +25,6 @@ trait Youtubeable
 
     public function endDownload($id, $name, $folder = 'uploads', $storage = 'public') {
         $path = Storage::disk($storage)->move($folder . '/' . $name, '/' . $folder . '/' . $id . '.mp3');
-        /*if (Storage::disk($storage)->exists($path)) {
-            return true;
-        } else {
-            return false;
-        }*/
         return $path;
     }
 }

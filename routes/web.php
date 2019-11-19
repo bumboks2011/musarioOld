@@ -20,5 +20,6 @@ Route::get('/list', 'HomeController@list')->name('list');
 Route::get('/library', 'HomeController@library')->name('library');
 Route::get('/upload', 'HomeController@upload')->name('upload');
 Route::get('/uptube', 'HomeController@uptube')->name('uptube');
+Route::get('/search', 'HomeController@search')->name('search');
 
 //Route::resource('rest', 'RestTestController')->names('restTest');
