@@ -265,6 +265,7 @@
                     this.play = true;
                     this.audio.play();
                     this.findCover(this.name);
+                    this.songListened(id);
                 } else {
                     this.play = !this.play;
                     if (this.play) {
@@ -533,7 +534,6 @@
                     .catch(error => console.log(error));
             },
             nextPlaylist(){
-                console.log('sss');
                 this.activePlaylist += 1;
                 if (this.activePlaylist == this.playlists.length) {
                     this.activePlaylist = 0;
@@ -548,6 +548,19 @@
                 }
                 this.id = this.playlists[this.activePlaylist]['id'];
                 this.getSongList();
+            },
+
+            //Watcher
+            songListened(id){
+                for(var i = 0; i < this.list.length; i++) {
+                    if(this.list[i].id === id) {
+                        axios
+                            .post('api/histories', {name: this.list[i].name, author: this.list[i].author, inPlaylist: true})
+                            .then()
+                            .catch(error => console.log(error));
+                        break;
+                    }
+                }
             },
 
             //UI

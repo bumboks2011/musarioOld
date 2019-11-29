@@ -77,4 +77,13 @@ class HomeController extends Controller
         return view('search');
     }
 
+    /**
+     * Show the application dashboard.
+     *
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function everyday()
+    {
+        return view('everyday');
+    }
 }

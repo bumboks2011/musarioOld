@@ -24,6 +24,7 @@ Vue.component('music-upload', require('./components/UploadMusic.vue').default);
 Vue.component('music-library', require('./components/LibraryPlayer.vue').default);
 Vue.component('music-uptube', require('./components/UpTube.vue').default);
 Vue.component('music-search', require('./components/SearchPlayer.vue').default);
+Vue.component('music-everyday', require('./components/EverydayPlayer.vue').default);
 /**
  * Next, we will create a fresh Vue application instance and attach it to
  * the page. Then, you may begin adding components to this application

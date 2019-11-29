@@ -41,13 +41,6 @@
                 </div>
             </div>
 
-            <!--<button type="button" class="btn btn-dark dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                {{ playlistName }}
-            </button>
-            <div class="dropdown-menu">
-                <a class="dropdown-item" @click="id = item.id; name = item.name; getSongList();" v-for="item in playlists" v-model="item.id">{{ item.name }}</a>
-            </div>-->
-
             <div class="float-left p-1" v-for="item in playlists" style="font-size: 18px;">
                 <a class="badge badge-pill badge-dark text-white p-2 pointed" @click="id = item.id; playlistName = item.name;"  v-model="item.id">{{ item.name }}</a>
             </div>

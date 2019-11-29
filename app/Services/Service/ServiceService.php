@@ -4,6 +4,7 @@
 namespace App\Services\Service;
 
 
+use App\Repositories\Everyday\EverydayRepository;
 use App\Repositories\Genre\GenreRepository;
 
 class ServiceService implements ServiceServiceInterface
@@ -13,14 +14,16 @@ class ServiceService implements ServiceServiceInterface
     private $pathApple = '939x0w.jpg';
     private $urlYouTube = 'https://www.youtube.com/results?sp=EgIQAQ%253D%253D&search_query=';
     private $genreRepository;
+    private $everydayRepository;
     private $yaBaseUrl = 'https://api.music.yandex.net';
 
     /**
      * @param GenreRepository $genre
      */
-    public function __construct(GenreRepository $genre)
+    public function __construct(GenreRepository $genre, EverydayRepository $everyday)
     {
         $this->genreRepository = $genre;
+        $this->everydayRepository = $everyday;
     }
 
     public function getGenre($data) {
@@ -56,7 +59,6 @@ class ServiceService implements ServiceServiceInterface
                 'author' => $author,
                 'name' => $author . ' - ' . $out['result']['tracks']['results'][$i]['title'],
                 'link' => null,
-                'cover' => $out['result']['tracks']['results'][$i]['albums'][0]['coverUri']
             ];
         }
         return $tracks;
@@ -85,6 +87,10 @@ class ServiceService implements ServiceServiceInterface
 
         $output = $url;
         return $output;
+    }
+
+    public function getEveryday($data) {
+        return $this->everydayRepository->getByUser($data->user()->id);
     }
 
     private function curl($url, $decode = true) {

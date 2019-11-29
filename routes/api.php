@@ -53,5 +53,9 @@ Route::group(['namespace' => 'Api'], function () {
         Route::post('/genre', 'GetGenreController')->middleware('auth:api');
         Route::post('/search', 'GetSearchListController')->middleware('auth:api');
         Route::post('/id', 'GetIdController')->middleware('auth:api');
+        Route::get('/everyday', 'GetEverydayController')->middleware('auth:api');
+    });
+    Route::group(['namespace' => 'History', 'prefix' => 'histories'], function () {
+        Route::post('/', 'CreateController')->middleware('auth:api');
     });
 });

@@ -20,19 +20,19 @@ class AuthorRepository implements AuthorRepositoryInterface
 
     public function create($name)
     {
-        if($this->getByName($name)) {
+        $result = $this->getByName($name);
+        if (empty($result)) {
             $this->author->name = trim($name);
             $this->author->save();
+            return $this->author->id;
         }
 
-        return $this->author->id;
+        return $result[0]['id'];
     }
 
     private function getByName($name)
     {
-        $result = $this->author->query()->where('name', '=', $name)->get()->toArray();
-
-        return empty($result);
+        return $this->author->where('name', '=', $name)->get()->toArray();
     }
 
     public function getAll()

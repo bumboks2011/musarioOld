@@ -100,14 +100,14 @@
             </div>
         </div>
 
-        <div class="pt-2">
+        <!--<div class="pt-2">
             <div class="input-group mb-3">
                 <input type="text" class="form-control" placeholder="Author - song name" aria-describedby="button-addon2" v-model="search">
                 <div class="input-group-append">
                     <button class="btn btn-dark" type="button" id="button-addon2" @click="searchSong">Search</button>
                 </div>
             </div>
-        </div>
+        </div>-->
         <div class="text-center" v-if="isSearch">
             <div class="spinner-border align-center" role="status">
                 <span class="sr-only">Loading...</span>
@@ -116,8 +116,8 @@
         <div id="list" v-else>
             <ul class="list-group">
                 <li v-for="(item, index) in list" v-bind:value="item.name" class="clearfix list-group-item list-group-item-action">
-                    <span @click="name = item.name; playSong(item.id, index); active = item.id;">
-                        <i class="fas fa-pause pr-3 pointed" v-if="active == item.id"></i>
+                    <span @click="name = item.name; playSong(item.ya_id, index); active = item.ya_id;">
+                        <i class="fas fa-pause pr-3 pointed" v-if="active == item.ya_id"></i>
                         <i class="fas fa-play pr-3 pointed" v-else></i>
                     </span>
                     {{ item.name }}
@@ -158,7 +158,6 @@
             return {
                 playerVisible: false,
                 isSearch: false,
-                search: '',
                 play: false,
                 volume: false,
                 direct: false,
@@ -195,13 +194,13 @@
         },
         methods:{
             ///// Player
-            searchSong() {
+            getEverydayPlayList() {
                 this.list = [];
                 this.active = null;
                 this.isSearch = true;
 
                 axios
-                    .post('api/services/search',{name: this.search})
+                    .get('api/services/everyday')
                     .then(response => {
                         if(response.data !== false) {
                             this.playerVisible = true;
@@ -223,7 +222,7 @@
             },
             async getLinksSongs() {
                 for(var i = 0; i < this.list.length; i++) {
-                    this.list[i].link = await this.getLinkById(this.list[i].id);
+                    this.list[i].link = await this.getLinkById(this.list[i].ya_id);
                 }
             },
             async getLinkById(id) {
@@ -245,7 +244,6 @@
                 return linkos;
             },
             update(){
-                //this.$forceUpdate();
                 this.time = this.audio.currentTime;
                 if (this.audio.ended) {
                     this.nextSong();
@@ -274,7 +272,7 @@
                     this.play = true;
                     await this.audio.play();
                     this.findCover(this.name);
-                    this.songListened(id);
+                    this.songListened(index);
                 } else {
                     this.play = !this.play;
                     if (this.play) {
@@ -289,14 +287,14 @@
                 var active;
                 if (this.direct === true) {
                     for (var i = 0; i < this.list.length; i++) {
-                        if (this.list[i].id === this.active) {
+                        if (this.list[i].ya_id === this.active) {
                             active = i;
                             break;
                         }
                     }
                 } else {
                     for (var i = 0; i < this.list.length; i++) {
-                        if (this.list[i].id === this.active) {
+                        if (this.list[i].ya_id === this.active) {
                             active = i + 1;
                             break;
                         }
@@ -307,13 +305,13 @@
                 }
 
                 this.name = this.list[active].name;
-                this.playSong(this.list[active].id, active);
-                this.active = this.list[active].id;
+                this.playSong(this.list[active].ya_id, active);
+                this.active = this.list[active].ya_id;
             },
             prevSong(){
                 var active;
                 for (var i = 0; i < this.list.length; i++) {
-                    if (this.list[i].id === this.active) {
+                    if (this.list[i].ya_id === this.active) {
                         active = i - 1;
                         break;
                     }
@@ -322,8 +320,8 @@
                     active = this.list.length - 1;
                 }
                 this.name = this.list[active].name;
-                this.playSong(this.list[active].id, active);
-                this.active = this.list[active].id;
+                this.playSong(this.list[active].ya_id, active);
+                this.active = this.list[active].ya_id;
             },
 
 
@@ -469,16 +467,11 @@
             },
 
             //Watcher
-            songListened(id){
-                for(var i = 0; i < this.list.length; i++) {
-                    if(this.list[i].id === id) {
-                        axios
-                            .post('api/histories', {name: this.list[i].name, author: this.list[i].author, inPlaylist: false})
-                            .then()
-                            .catch(error => console.log(error));
-                        break;
-                    }
-                }
+            songListened(index){
+                axios
+                    .post('api/histories', {name: this.list[index].name, author: this.list[index].author, inPlaylist: false})
+                    .then()
+                    .catch(error => console.log(error));
             },
 
             //UI
@@ -500,6 +493,7 @@
 
             this.checkFormat();
             this.audio.src = this.path + 0 + '.' + this.type;
+            this.getEverydayPlayList();
         },
     }
 </script>
