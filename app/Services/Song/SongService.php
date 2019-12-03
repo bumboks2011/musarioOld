@@ -28,6 +28,9 @@ class SongService implements SongServiceInterface
                     $uploaded = $this->fileService->upload($item, $id . '.mp3');
                     $songs[] = ['id' => $id, 'uploaded' => $uploaded];
                 }
+                if (empty($songs)) {
+                    return false;
+                }
                 break;
             case 'uptube':
                 $initial = $this->fileService->initiateDownload($data->url);
@@ -58,7 +61,7 @@ class SongService implements SongServiceInterface
 
     public function update($data)
     {
-        return $this->songRepository->update($data->id, $data->name, $data->author_id, $data->genre_id, $data->begin);
+        return $this->songRepository->update($data->id, $data->name, $data->author_id, $data->genre_id);
     }
 
     public function getAll($data)

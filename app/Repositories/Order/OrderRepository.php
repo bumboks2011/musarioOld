@@ -22,7 +22,7 @@ class OrderRepository implements OrderRepositoryInterface
             ->join("authors","authors.id","=","songs.author_id")
             ->where('playlist_id', '=', $playlistId)
             ->orderBy('pos_id', 'desc')
-            ->get(['songs.id', 'orders.id as orderId','songs.name','songs.author_id','authors.name as author','songs.genre_id','songs.begin','orders.pos_id'])
+            ->get(['songs.id', 'orders.id as orderId','songs.name','songs.author_id','authors.name as author','songs.genre_id','orders.pos_id'])
             ->toArray();
     }
 

@@ -10,7 +10,7 @@ class SongRepository implements SongRepositoryInterface
 {
     private $song;
     private $order;
-    private $limit = ['id','name','author_id', 'genre_id', 'begin'];
+    private $limit = ['id','name','author_id', 'genre_id'];
 
     /**
      *
@@ -39,9 +39,9 @@ class SongRepository implements SongRepositoryInterface
         return $this->song->query()->where('user_id', '=', $user_id)->get($this->limit)->toArray();
     }
 
-    public function update($id, $name, $author_id, $genre_id, $begin)
+    public function update($id, $name, $author_id, $genre_id)
     {
-        return $this->song->find($id)->update(['name' => $name, 'author_id' => $author_id, 'genre_id' => $genre_id, 'begin' => $begin]);
+        return $this->song->find($id)->update(['name' => $name, 'author_id' => $author_id, 'genre_id' => $genre_id]);
     }
 
     public function delete($songId)

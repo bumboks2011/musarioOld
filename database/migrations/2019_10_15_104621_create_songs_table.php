@@ -19,7 +19,6 @@ class CreateSongsTable extends Migration
             $table->string('name', 255);
             $table->bigInteger('author_id')->nullable();
             $table->bigInteger('genre_id')->nullable();
-            $table->year('begin')->nullable();
             $table->timestamp('created_at')->nullable();
             $table->timestamp('updated_at')->nullable();
         });

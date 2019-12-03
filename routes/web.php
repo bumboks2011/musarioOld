@@ -22,5 +22,6 @@ Route::get('/everyday', 'HomeController@everyday')->name('everyday');
 Route::get('/upload', 'HomeController@upload')->name('upload');
 Route::get('/uptube', 'HomeController@uptube')->name('uptube');
 Route::get('/search', 'HomeController@search')->name('search');
+Route::get('/documentation', 'HomeController@documentation')->name('documentation');
 
 //Route::resource('rest', 'RestTestController')->names('restTest');

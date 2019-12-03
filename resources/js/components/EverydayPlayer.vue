@@ -33,25 +33,34 @@
 </style>
 <template>
     <div>
-        <div id="playlist">
-            <img src="pic/cover.png" id="coverPicture" class="rounded float-left col-md-12 pr-0 col-lg-5 pr-lg-2 pl-0" alt="cover">
-            <h1 v-if="!editPlaylistName"> <span @click="editPlaylistName = true">{{ playlistName }}</span></h1>
-            <div v-else class="input-group mb-3 col-7 col-sm-7">
-                <input type="text" class="form-control" placeholder="Enter new playlist name" v-model="playlistName">
-                <div class="input-group-append">
-                    <button type="button" class="btn btn-dark" @click="editPlayList(id,playlistName); editPlaylistName = false">edit</button>
-                    <button type="button" class="btn btn-dark" @click="removePlayList(id,playlistName); editPlaylistName = false">delete</button>
+        <div id="playlist" class="row flex-row-reverse">
+            <div class="col-md-6 d-flex flex-wrap pl-lg-0">
+                <div class="row w-100 mx-0 align-self-start">
+                    <h1 v-if="!editPlaylistName"> <span @click="editPlaylistName = true">{{ playlistName }}</span></h1>
+                    <div v-else class="input-group mb-3 col-7 col-sm-7">
+                        <input type="text" class="form-control" placeholder="Enter new playlist name" v-model="playlistName">
+                        <div class="input-group-append">
+                            <button type="button" class="btn btn-dark" @click="editPlayList(id,playlistName); editPlaylistName = false">edit</button>
+                            <button type="button" class="btn btn-dark" @click="removePlayList(id,playlistName); editPlaylistName = false">delete</button>
+                        </div>
+                    </div>
+                    <div class="row w-100 mx-0">
+                        <div class="float-left p-1" v-for="item in playlists" style="font-size: 18px;">
+                            <a class="badge badge-pill badge-dark text-white p-2 pointed" @click="id = item.id; playlistName = item.name;"  v-model="item.id">{{ item.name }}</a>
+                        </div>
+
+                        <div class="float-left p-1" style="font-size: 18px;">
+                            <a class="badge badge-pill badge-dark text-white p-2 pointed" data-toggle="modal" data-target="#addModal">+</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="row align-self-end mx-0 p-0 w-100">
+                    <div class="rounded py-1 w-100" style="">{{ name }}</div>
                 </div>
             </div>
-
-            <div class="float-left p-1" v-for="item in playlists" style="font-size: 18px;">
-                <a class="badge badge-pill badge-dark text-white p-2 pointed" @click="id = item.id; playlistName = item.name;"  v-model="item.id">{{ item.name }}</a>
+            <div class="col-md-6 pr-md-0">
+                <img src="pic/cover.png" id="coverPicture" class="rounded pr-0 col-lg-12 pr-lg-2 pl-0" alt="cover">
             </div>
-
-            <div class="float-left p-1" style="font-size: 18px;">
-                <a class="badge badge-pill badge-dark text-white p-2 pointed" data-toggle="modal" data-target="#addModal">+</a>
-            </div>
-
             <!-- Modal -->
             <div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="addModalLabel" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered" role="document">
@@ -75,7 +84,6 @@
             </div>
 
         </div>
-        <br>
 
         <div class="d-inline-flex bg-dark rounded w-100" id="player" v-if="playerVisible">
             <div class="btn-group bg-dark rounded h-100" role="group" aria-label="Basic example">

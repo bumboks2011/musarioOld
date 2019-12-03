@@ -86,4 +86,14 @@ class HomeController extends Controller
     {
         return view('everyday');
     }
+
+    /**
+     * Show the application dashboard.
+     *
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function documentation()
+    {
+        return view('documentation');
+    }
 }
