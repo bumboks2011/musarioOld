@@ -32,7 +32,7 @@ class PlaylistService implements PlaylistServiceInterface
     {
         if (!$this->orderRepository->getOrderByPlaylist($data->id)) {
             if ($this->playlistRepository->delete($data->id)) {
-                return $this->getAll($data);
+                return true;
             } else {
                 return false;
             }

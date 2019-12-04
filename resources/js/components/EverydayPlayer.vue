@@ -433,9 +433,7 @@
                             if(response.data === false) {
                                 alert('Delete playlist error!');
                             }
-                            this.playlists = response.data;
-                            this.playlistName = response.data[0]['name'];
-                            this.id = response.data[0]['id'];
+                            this.getPlayList();
                         })
                         .catch(error => console.log(error));
                 }
