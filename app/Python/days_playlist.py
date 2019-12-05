@@ -36,10 +36,10 @@ ya_client=ya.client.Client()
 
 
 class User(object):
-    
-    
+
+
     def __init__(self, _id, period=7):
-        
+
         self.years={}
         self.genres={}
         self.styles={}
@@ -48,16 +48,16 @@ class User(object):
         self.__period = period
         self.__playlist = []
         self.history = self.__get_history()
-        
-        
+
+
     def __get_history(self):
-        
+
         cursor.execute('SELECT name, COUNT(*) AS n, author, in_playlist FROM histories where user_id=%s AND updated_at>DATE_SUB(CURDATE(), INTERVAL %s DAY) GROUP BY name, author, in_playlist;',(self.id,self.__period,))
         res = cursor.fetchall()
         return res
-    
+
     def __fix_name(self, entry):
-        
+
         if entry['author']!='Unknown':
             entry['name'] = entry['name'].replace(entry['author'],'')[3:]
         else:
@@ -65,10 +65,10 @@ class User(object):
             entry['name'] = tmp[1]
             entry['author'] = tmp[0]
         return entry
-    
-    
+
+
     def __make_shares(self):
-        
+
         summ = sum(list(self.genres.values()))
         for genre in self.genres:
             self.genres[genre] = self.genres[genre]/summ
@@ -81,12 +81,12 @@ class User(object):
         summ = sum(list(self.years.values()))
         for year in self.years:
             self.years[year] = self.years[year]/summ
-            
-            
+
+
     def __get_songs_info(self):
-        
+
         for entry in self.history:
-            
+
             entry = self.__fix_name(entry)
             res = d.search(entry['name'], artist=entry['author'], type='release').sort('year')
             sleep(1)
@@ -120,20 +120,20 @@ class User(object):
             except Exception as e:
                 print("Unknown error: {0}".format(e))
                 continue
-                
+
     def calc_preferences(self):
         self.__get_songs_info()
         self.__make_shares()
-        
+
     def pick_song(self, num = 10, max_fails = 3):
         done = 0
         fails = 0 #количество ошибок получения песни подряд
         # если количество попыток превышено, считаем, что песня найдена, чтобы не уйти в бесконечный цикл
         while done < num:
-            
+
             if fails >= max_fails:
                 done += 1
-                
+
             artist = ''
             style = ''
             genre = ''
@@ -147,7 +147,7 @@ class User(object):
                 if use_style:
                     style = np.random.choice(list(self.styles.keys()), p=list(self.styles.values()))
                 else:
-                    genre = np.random.choice(list(self.genres.keys()), p=list(self.genres.values()))        
+                    genre = np.random.choice(list(self.genres.keys()), p=list(self.genres.values()))
                 year = np.random.choice(list(self.years.keys()), p=list(self.years.values()))
 
             try:
@@ -171,7 +171,7 @@ class User(object):
                 fails += 1
                 sleep(1)
                 continue
-                
+
             except ValueError:
                 print("ValueError - can't find a song")
                 fails += 1
@@ -181,22 +181,22 @@ class User(object):
             done +=1
             fails = 0
             sleep(1)
-            
+
     def get_playlist(self):
         if len(self.__playlist)==0:
             self.pick_song(20)
         return self.__playlist
-        
+
 
 
 # In[21]:
 
 
 try:
-    connection = mysql.connector.connect(host='188.68.98.195',
+    connection = mysql.connector.connect(host='localhost',
                                          database='musario2',
-                                         user='ivanbb',
-                                         password='086420')
+                                         user='root',
+                                         password='0864')
     cursor = connection.cursor(dictionary=True)
 except:
     print('ERROR in connection to database');
@@ -248,7 +248,7 @@ for user in users:
         try:
             song_name = song['artist']+' - ' + song['title']
             ya_res = ya_client.search(text=song['artist']+' - ' + song['title'], type_='track', page=0).tracks.results[0]
-            cursor.execute("INSERT INTO everydays (user_id, name, author, ya_id) VALUES (%s, %s, %s, %s);", 
+            cursor.execute("INSERT INTO everydays (user_id, name, author, ya_id) VALUES (%s, %s, %s, %s);",
                            (str(user.id), song_name, str(song['artist']), str(ya_res['id']),))
             connection.commit()
         except AttributeError as e:

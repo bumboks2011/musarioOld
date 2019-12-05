@@ -19,8 +19,10 @@ class HistoryService implements HistoryServiceInterface
     }
 
     /**
+     * Calls the create method in the repository
+     *
      * @param $data
-     * @return mixed
+     * @return int
      */
     public function create($data)
     {

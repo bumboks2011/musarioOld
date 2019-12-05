@@ -13,7 +13,7 @@ class CreateController extends Controller
      *
      * @param CreateAuthor $request
      * @param AuthorService $service
-     * @return void
+     * @return \Illuminate\Http\Response
      */
     public function __invoke(CreateAuthor $request, AuthorService $service)
     {

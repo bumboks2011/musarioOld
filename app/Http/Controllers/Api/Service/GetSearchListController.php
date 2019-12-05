@@ -14,7 +14,7 @@ class GetSearchListController extends Controller
      *
      * @param GetSearchList $request
      * @param ServiceService $service
-     * @return void
+     * @return \Illuminate\Http\Response
      */
     public function __invoke(GetSearchList $request, ServiceService $service)
     {

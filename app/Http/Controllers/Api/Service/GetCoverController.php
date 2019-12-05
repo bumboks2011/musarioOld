@@ -14,7 +14,7 @@ class GetCoverController extends Controller
      *
      * @param GetCover $request
      * @param ServiceService $service
-     * @return void
+     * @return \Illuminate\Http\Response
      */
     public function __invoke(GetCover $request, ServiceService $service)
     {

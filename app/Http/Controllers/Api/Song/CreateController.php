@@ -13,7 +13,7 @@ class CreateController extends Controller
      *
      * @param CreateSong $request
      * @param SongService $service
-     * @return bool
+     * @return \Illuminate\Http\Response
      */
     public function __invoke(CreateSong $request, SongService $service)
     {

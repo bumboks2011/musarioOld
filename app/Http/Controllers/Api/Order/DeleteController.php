@@ -14,7 +14,7 @@ class DeleteController extends Controller
      *
      * @param DeleteOrder $request
      * @param OrderService $service
-     * @return void
+     * @return \Illuminate\Http\Response
      */
     public function __invoke(DeleteOrder $request, OrderService $service)
     {

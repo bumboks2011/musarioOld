@@ -14,7 +14,7 @@ class UpdateController extends Controller
      *
      * @param UpdateSong $request
      * @param SongService $service
-     * @return void
+     * @return \Illuminate\Http\Response
      */
     public function __invoke(UpdateSong $request, SongService $service)
     {

@@ -8,6 +8,16 @@ use YoutubeDl\YoutubeDl;
 
 trait Youtubeable
 {
+
+    /**
+     * initiates loading via python library on url in storage
+     *
+     * @param $url
+     * @param string $folder
+     * @param string $storage
+     * @return array
+     * @throws \Exception
+     */
     public function initiateDownload($url, $folder = 'uploads', $storage = 'public')
     {
         $dl = new YoutubeDl([
@@ -23,6 +33,15 @@ trait Youtubeable
         return ['name' => $video['title'], 'filename' => $video['_filename']];
     }
 
+    /**
+     * renames from name to id
+     *
+     * @param $id
+     * @param $name
+     * @param string $folder
+     * @param string $storage
+     * @return bool
+     */
     public function endDownload($id, $name, $folder = 'uploads', $storage = 'public') {
         $path = Storage::disk($storage)->move($folder . '/' . $name, '/' . $folder . '/' . $id . '.mp3');
         return $path;

@@ -14,7 +14,7 @@ class DeleteController extends Controller
      *
      * @param DeletePlaylist $request
      * @param PlaylistService $service
-     * @return void
+     * @return \Illuminate\Http\Response
      */
     public function __invoke(DeletePlaylist $request, PlaylistService $service)
     {

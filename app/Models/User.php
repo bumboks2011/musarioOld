@@ -37,11 +37,21 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
+    /**
+     * Defining One To Many Relationship
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
     public function playlist()
     {
         return $this->hasMany(Playlist::class);
     }
 
+    /**
+     * Defining One To Many Relationship
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
     public function song()
     {
         return $this->hasMany(Song::class);

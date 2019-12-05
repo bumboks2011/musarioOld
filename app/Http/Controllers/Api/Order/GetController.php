@@ -14,7 +14,7 @@ class GetController extends Controller
      *
      * @param GetOrder $request
      * @param OrderService $service
-     * @return void
+     * @return \Illuminate\Http\Response
      */
     public function __invoke(GetOrder $request, OrderService $service)
     {

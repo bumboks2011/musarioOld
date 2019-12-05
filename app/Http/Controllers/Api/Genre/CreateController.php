@@ -13,7 +13,7 @@ class CreateController extends Controller
      *
      * @param CreateGenre $request
      * @param GenreService $service
-     * @return void
+     * @return \Illuminate\Http\Response
      */
     public function __invoke(CreateGenre $request, GenreService $service)
     {

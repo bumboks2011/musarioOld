@@ -12,12 +12,24 @@ class SongService implements SongServiceInterface
     private $songRepository;
     private $fileService;
 
+    /**
+     * SongService constructor.
+     * @param SongRepository $song
+     * @param FileService $fileService
+     */
     public function __construct(SongRepository $song, FileService $fileService)
     {
         $this->songRepository = $song;
         $this->fileService = $fileService;
     }
 
+    /**
+     * Calls creation methods based on $data->type
+     *
+     * @param $data
+     * @return array|bool
+     * @throws \Exception
+     */
     public function create($data)
     {
         $songs = [];
@@ -59,16 +71,34 @@ class SongService implements SongServiceInterface
         return $songs;
     }
 
+    /**
+     * Calls the update method in the repository
+     *
+     * @param $data
+     * @return bool
+     */
     public function update($data)
     {
         return $this->songRepository->update($data->id, $data->name, $data->author_id, $data->genre_id);
     }
 
+    /**
+     * Calls the get method in the repository
+     *
+     * @param $data
+     * @return array
+     */
     public function getAll($data)
     {
         return $this->songRepository->getAll($data->user()->id);
     }
 
+    /**
+     * Calls the delete method in the repository
+     *
+     * @param $songId
+     * @return bool
+     */
     public function delete($songId)
     {
         return $this->fileService->delete($songId.'.mp3') && $this->songRepository->delete($songId);

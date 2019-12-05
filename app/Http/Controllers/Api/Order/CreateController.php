@@ -14,7 +14,7 @@ class CreateController extends Controller
      *
      * @param CreateOrder $request
      * @param OrderService $service
-     * @return void
+     * @return \Illuminate\Http\Response
      */
     public function __invoke(CreateOrder $request, OrderService $service)
     {

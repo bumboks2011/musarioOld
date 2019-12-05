@@ -9,12 +9,25 @@ class HistoryRepository implements HistoryRepositoryInterface
 {
     public $history;
 
+    /**
+     * HistoryRepository constructor.
+     * @param History $history
+     */
     public function __construct(History $history)
     {
         $this->history = $history;
     }
 
-    public function create($userId,$name,$author,$inPlaylist)
+    /**
+     * creates a record of the listened song
+     *
+     * @param $userId
+     * @param $name
+     * @param $author
+     * @param $inPlaylist
+     * @return int
+     */
+    public function create($userId, $name, $author, $inPlaylist)
     {
         $this->history->user_id = $userId;
         $this->history->name = trim($name);

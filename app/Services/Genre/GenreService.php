@@ -11,6 +11,7 @@ class GenreService implements GenreServiceInterface
     private $genreRepository;
 
     /**
+     * GenreService constructor.
      * @param GenreRepository $genre
      */
     public function __construct(GenreRepository $genre)
@@ -19,17 +20,23 @@ class GenreService implements GenreServiceInterface
     }
 
     /**
+     * Calls the create method in the repository
+     *
      * @param $data
-     * @return mixed
+     * @return int
      */
     public function create($data)
     {
         return $this->genreRepository->create($data->name);
     }
 
+    /**
+     * Calls the get method in the repository
+     *
+     * @return array
+     */
     public function getAll()
     {
-
         return $this->genreRepository->getAll();
     }
 }

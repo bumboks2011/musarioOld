@@ -14,7 +14,7 @@ class UpdateController extends Controller
      *
      * @param UpdateOrder $request
      * @param OrderService $service
-     * @return void
+     * @return \Illuminate\Http\Response
      */
     public function __invoke(UpdateOrder $request, OrderService $service)
     {

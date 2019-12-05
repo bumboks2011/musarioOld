@@ -10,11 +10,21 @@ class OrderRepository implements OrderRepositoryInterface
 {
     private $order;
 
+    /**
+     * OrderRepository constructor.
+     * @param Order $order
+     */
     public function __construct(Order $order)
     {
         $this->order = $order;
     }
 
+    /**
+     * Returns the entries from the order table the column in which the $playlistId is equal
+     *
+     * @param $playlistId
+     * @return array
+     */
     public function getOrderByPlaylist($playlistId)
     {
         return $this->order->query()
@@ -26,11 +36,23 @@ class OrderRepository implements OrderRepositoryInterface
             ->toArray();
     }
 
+    /**
+     * Returns the entries from the order table the column in which the $songId is equal
+     *
+     * @param $songId
+     * @return array
+     */
     public function getOrderBySongId($songId)
     {
         return $this->order->where('song_id','=',$songId)->get()->toArray();
     }
 
+    /**
+     * deletes the record by id. It also edits a record indicating the record to be deleted to maintain integrity
+     *
+     * @param $id
+     * @return int
+     */
     public function deleteOrderById($id)
     {
         $order = $this->order->find($id);
@@ -40,6 +62,13 @@ class OrderRepository implements OrderRepositoryInterface
         return $songId;
     }
 
+    /**
+     * Changes pos_id for the $orderId of writing to the $nextId
+     *
+     * @param $orderId
+     * @param $nextId
+     * @return bool
+     */
     public function changePosId($orderId, $nextId)
     {
         $order = $this->order->find($orderId);
@@ -51,6 +80,13 @@ class OrderRepository implements OrderRepositoryInterface
         return true;
     }
 
+    /**
+     * creates a record. Also changes the pos_id of the previous record to maintain integrity.
+     *
+     * @param $playlistId
+     * @param $songId
+     * @return bool
+     */
     public function createOrder($playlistId, $songId)
     {
         $lastOrderId = $this->order->where('playlist_id','=', $playlistId)->where('pos_id', '=', 0)->value('id');

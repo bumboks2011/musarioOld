@@ -13,7 +13,7 @@ class GetController extends Controller
      *
      * @param \Illuminate\Http\Request $request
      * @param SongService $service
-     * @return void
+     * @return \Illuminate\Http\Response
      */
     public function __invoke(Request $request, SongService $service)
     {

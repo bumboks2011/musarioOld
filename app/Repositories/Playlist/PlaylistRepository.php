@@ -20,6 +20,13 @@ class PlaylistRepository implements PlaylistRepositoryInterface
         $this->playlist = $playlist;
     }
 
+    /**
+     * Creates an entry in a playlist table
+     *
+     * @param $user_id
+     * @param $name
+     * @return array
+     */
     public function create($user_id, $name)
     {
         $this->playlist->user_id = $user_id;
@@ -29,16 +36,35 @@ class PlaylistRepository implements PlaylistRepositoryInterface
         return ['id' => $this->playlist->id, 'name' => $this->playlist->name];
     }
 
+    /**
+     * Updates record by id
+     *
+     * @param $id
+     * @param $name
+     * @return bool
+     */
     public function update($id, $name)
     {
         return $this->playlist->find($id)->update(['name' => $name]);
     }
 
+    /**
+     * Deletes record by id
+     *
+     * @param $id
+     * @return bool
+     */
     public function delete($id)
     {
         return $this->playlist->find($id)->delete();
     }
 
+    /**
+     * Returns an array of records in which the user_id column is equal to $user_id
+     *
+     * @param $user_id
+     * @return array
+     */
     public function getAll($user_id)
     {
         return $this->playlist->query()->where('user_id', '=', $user_id)->get($this->limit)->toArray();

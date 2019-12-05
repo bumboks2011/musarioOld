@@ -18,7 +18,9 @@ class ServiceService implements ServiceServiceInterface
     private $yaBaseUrl = 'https://api.music.yandex.net';
 
     /**
+     * ServiceService constructor.
      * @param GenreRepository $genre
+     * @param EverydayRepository $everyday
      */
     public function __construct(GenreRepository $genre, EverydayRepository $everyday)
     {
@@ -26,6 +28,12 @@ class ServiceService implements ServiceServiceInterface
         $this->everydayRepository = $everyday;
     }
 
+    /**
+     * Gets the genre by song title
+     *
+     * @param $data
+     * @return bool|int
+     */
     public function getGenre($data) {
         $url = $this->urlApple . urlencode($data->name);
         $out = $this->curl($url);
@@ -37,6 +45,12 @@ class ServiceService implements ServiceServiceInterface
         }
     }
 
+    /**
+     * Gets the genre by song title
+     *
+     * @param $data
+     * @return bool|string
+     */
     public function getCover($data) {
         $url = $this->urlApple . urlencode($data->name);
         $out = $this->curl($url);
@@ -48,6 +62,12 @@ class ServiceService implements ServiceServiceInterface
         }
     }
 
+    /**
+     * Searches for music by name using ya api
+     *
+     * @param $data
+     * @return array
+     */
     public function getSearchByName($data) {
         $out = $this->curl($this->yaBaseUrl . '/search?text=' . urlencode($data->name) . '&page=0&type=track');
         //return $out;
@@ -64,6 +84,12 @@ class ServiceService implements ServiceServiceInterface
         return $tracks;
     }
 
+    /**
+     * Converts ya id songs to song link
+     *
+     * @param $data
+     * @return string
+     */
     public function getUrlById($data) {
         $info = $this->curl($this->yaBaseUrl . '/tracks/' . $data->id . '/download-info');
         $downloadInfoUrl = '';
@@ -89,10 +115,23 @@ class ServiceService implements ServiceServiceInterface
         return $output;
     }
 
+    /**
+     * Gets user id daily playlist
+     *
+     * @param $data
+     * @return array
+     */
     public function getEveryday($data) {
         return $this->everydayRepository->getByUser($data->user()->id);
     }
 
+    /**
+     * fulfills curl request
+     *
+     * @param $url
+     * @param bool $decode
+     * @return bool|mixed|string
+     */
     private function curl($url, $decode = true) {
         $curl = curl_init();
         curl_setopt($curl, CURLOPT_URL, $url);
