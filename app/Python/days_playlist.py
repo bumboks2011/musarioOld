@@ -127,8 +127,8 @@ class User(object):
 
     def pick_song(self, num = 10, max_fails = 3):
         done = 0
-        fails = 0 #количество ошибок получения песни подряд
-        # если количество попыток превышено, считаем, что песня найдена, чтобы не уйти в бесконечный цикл
+        fails = 0 #the number of errors receiving a song in a row
+        # if the number of attempts is exceeded, we believe that the song was found so as not to go into an endless loop
         while done < num:
 
             if fails >= max_fails:
@@ -193,10 +193,10 @@ class User(object):
 
 
 try:
-    connection = mysql.connector.connect(host='localhost',
-                                         database='musario2',
-                                         user='root',
-                                         password='0864')
+    connection = mysql.connector.connect(host='', # paste host
+                                         database='', # paste database
+                                         user='', # paste user
+                                         password='') # paste password
     cursor = connection.cursor(dictionary=True)
 except:
     print('ERROR in connection to database');
