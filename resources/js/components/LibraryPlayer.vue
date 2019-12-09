@@ -4,6 +4,10 @@
         cursor: pointer;
     }
 
+    .font-normal {
+        font-style: normal !important;
+    }
+
     /*UI toast*/
     .toastify {
         display: flex;
@@ -30,49 +34,21 @@
 </style>
 <template>
     <div>
-        <div id="playlist">
-            <img src="pic/cover2.png" id="coverPicture" class="rounded float-left col-md-12 pr-0 col-lg-5 pr-lg-2 pl-0" alt="cover">
-            <h1 v-if="!editPlaylistName"> <span @click="editPlaylistName = true">{{ playlistName }}</span></h1>
-            <div v-else class="input-group mb-3 col-7 col-sm-7">
-                <input type="text" class="form-control" placeholder="Enter new playlist name" v-model="playlistName">
-                <div class="input-group-append">
-                    <button type="button" class="btn btn-dark" @click="editPlayList(id,playlistName); editPlaylistName = false">edit</button>
-                    <button type="button" class="btn btn-dark" @click="removePlayList(id,playlistName); editPlaylistName = false">delete</button>
+        <div id="playlist" class="row flex-row-reverse">
+            <div class="col-md-6 d-flex flex-wrap pl-lg-0">
+                <div class="row w-100 mx-0 align-self-start">
+                    <h1><span>Library</span></h1>
+                    <div class="d-none d-md-block mx-0 p-0 w-100">All your music is here</div>
+                </div>
+                <div class="row align-self-end mx-0 p-0 w-100">
+                    <div class="rounded py-1 w-100 title" style="">{{ name }}</div>
                 </div>
             </div>
-
-            <div class="float-left p-1" v-for="item in playlists" style="font-size: 18px;">
-                <a class="badge badge-pill badge-dark text-white p-2 pointed" @click="id = item.id; playlistName = item.name;"  v-model="item.id">{{ item.name }}</a>
-            </div>
-
-            <div class="float-left p-1" style="font-size: 18px;">
-                <a class="badge badge-pill badge-dark text-white p-2 pointed" data-toggle="modal" data-target="#addModal">+</a>
-            </div>
-
-            <!-- Modal -->
-            <div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="addModalLabel" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered" role="document">
-                    <div class="modal-content bg-dark">
-                        <div class="modal-header">
-                            <h5 class="modal-title text-white" id="addModalLabel">Add playlist</h5>
-                            <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                        <div class="modal-body bg-white">
-                            <div class="input-group mb-3">
-                                <input type="text" class="form-control" placeholder="Enter new playlist name" v-model="addPlaylistName">
-                                <div class="input-group-append">
-                                    <button type="button" class="btn btn-dark" data-dismiss="modal" @click="addPlayList(addPlaylistName)">add</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            <div class="col-md-6 pr-md-0">
+                <img src="pic/cover2.png" id="coverPicture" class="rounded pr-0 col-lg-12 pr-lg-2 pl-0" alt="cover">
             </div>
 
         </div>
-        <br>
 
         <div class="d-inline-flex bg-dark rounded w-100" id="player">
             <div class="btn-group bg-dark rounded h-100" role="group" aria-label="Basic example">
@@ -104,10 +80,18 @@
                         <i class="fas fa-play pr-3" v-else></i>
                     </span>
                     {{ item.name }}
-                    <!--<a href="#" class="badge badge-pill badge-dark">{{ item.style }}</a>-->
-                    <!--<a href="#" class="badge badge-pill badge-dark">{{ item.author }}</a>-->
-                    <i class="fas fa-plus float-right pointed" @click="addSong(item.id)"></i>
-                    <i class="fas fa-pen float-right pr-3 pointed" @click="openModal(item)" data-toggle="modal" data-target="#editModal"></i>
+                    <div class="float-right">
+                        <i class="fas fa-pen float-right pointed" @click="openModal(item)" data-toggle="modal" data-target="#editModal"></i>
+                        <i class="dropdown dropleft show float-right pointed pr-3">
+                            <i role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="fas fa-plus"></i>
+                            </i>
+
+                            <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                                <a v-for="(itemPlay, indexPlay) in playlists" @click="addSong(item.id, itemPlay.id)" class="dropdown-item font-normal">{{ itemPlay.name }}</a>
+                            </div>
+                        </i>
+                    </div>
                 </li>
             </ul>
             <!-- Modal -->
@@ -212,11 +196,6 @@
                 styleName: '',
 
                 playlists: [],
-                activePlaylist: 0,
-                id: 0,
-                playlistName: '',
-                editPlaylistName: false,
-                addPlaylistName: '',
 
                 successTify: false,
                 alertTify: false,
@@ -311,9 +290,9 @@
                     })
                     .catch(error => console.log(error));
             },
-            addSong(id){
+            addSong(id,playlistId){
                 axios
-                    .post('api/orders/' + this.id,{song: id})
+                    .post('api/orders/' + playlistId,{song: id})
                     .then(response => {
                         if(response.data === true) {
                             this.alertNotify();
@@ -324,20 +303,6 @@
                     })
                     .catch(error => console.log(error));
             },
-            /*deleteSong(id){
-                if (confirm("Are you sure?")) {
-                    axios
-                        .delete('api/songs/' + id)
-                        .then(response => {
-                            if(response.data === true) {
-                                this.getSongList();
-                            } else {
-                                alert('Delete song error!');
-                            }
-                        })
-                        .catch(error => console.log(error));
-                }
-            },*/
             getAuthor(){
                 axios
                     .get('api/authors')
@@ -431,46 +396,8 @@
                         console.log(response.data);
                         this.playlists = response.data;
                         if (stretch === false) {
-                            this.playlistName = response.data[0]['name'];
-                            this.id = response.data[0]['id'];
                             this.getSongList();
                         }
-                    })
-                    .catch(error => console.log(error));
-            },
-            editPlayList(id, name){
-                axios
-                    .put('api/playlists/' + id, {name: name})
-                    .then(response => {
-                        this.playlistName = name;
-                        this.id = id;
-                        this.getPlayList(true);
-                        //list.getSongList(json[0]['id']);
-                    })
-                    .catch(error => console.log(error));
-            },
-            removePlayList(id, name){
-                if (confirm("Are you sure?")) {
-                    axios
-                        .delete('api/playlists/' + id)
-                        .then(response => {
-                            //console.log(json);
-                            if(response.data === false) {
-                                alert('Delete playlist error!');
-                            }
-                            this.getPlayList();
-                        })
-                        .catch(error => console.log(error));
-                }
-            },
-            addPlayList(name){
-                axios
-                    .post('api/playlists', {name: name})
-                    .then(response => {
-                        this.playlistName = response.data['name'];
-                        this.id = response.data['id'];
-                        this.getPlayList();
-                        this.getSongList(response.data['id']);
                     })
                     .catch(error => console.log(error));
             },

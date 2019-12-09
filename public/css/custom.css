@@ -10,3 +10,11 @@
 .w41 {
     width: 41% !important;
 }
+
+@media (min-width: 768px){
+    .title{
+        font-size: 1.125rem;
+        text-align: center !important;
+        margin-bottom: 0.25rem !important;
+    }
+}

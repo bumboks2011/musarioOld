@@ -52,7 +52,7 @@ Route::group(['namespace' => 'Api'], function () {
         Route::post('/cover', 'GetCoverController')->middleware('auth:api');
         Route::post('/genre', 'GetGenreController')->middleware('auth:api');
         Route::post('/search', 'GetSearchListController')->middleware('auth:api');
-        Route::post('/id', 'GetIdController')->middleware('auth:api');
+        Route::post('/id', 'GetIdController')->middleware('auth:api','throttle:240,1');
         Route::get('/everyday', 'GetEverydayController')->middleware('auth:api');
     });
     Route::group(['namespace' => 'History', 'prefix' => 'histories'], function () {

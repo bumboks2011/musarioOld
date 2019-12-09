@@ -72,6 +72,9 @@ class ServiceService implements ServiceServiceInterface
         $out = $this->curl($this->yaBaseUrl . '/search?text=' . urlencode($data->name) . '&page=0&type=track');
         //return $out;
         $tracks = [];
+        if (empty($out['result']['tracks']['results'])) {
+            return $tracks;
+        }
         for ($i = 0; $i < 20; $i++) {
             $author = empty($out['result']['tracks']['results'][$i]['artists']) ? 'Unknown' : $out['result']['tracks']['results'][$i]['artists'][0]['name'];
             $tracks[] = [

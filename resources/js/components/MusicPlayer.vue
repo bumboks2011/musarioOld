@@ -33,30 +33,33 @@
 </style>
 <template>
     <div>
-        <div id="playlist">
-            <img src="pic/cover3.png" id="coverPicture" class="rounded float-left col-md-12 pr-0 col-lg-5 pr-lg-2 pl-0" alt="cover">
-            <h1 v-if="!editPlaylistName"> <span @click="editPlaylistName = true">{{ playlistName }}</span></h1>
-            <div v-else class="input-group mb-3 col-7 col-sm-7">
-                <input type="text" class="form-control" placeholder="Enter new playlist name" v-model="playlistName">
-                <div class="input-group-append">
-                    <button type="button" class="btn btn-dark" @click="editPlayList(id,playlistName); editPlaylistName = false">edit</button>
-                    <button type="button" class="btn btn-dark" @click="removePlayList(id,playlistName); editPlaylistName = false">delete</button>
+        <div id="playlist" class="row flex-row-reverse">
+            <div class="col-md-6 d-flex flex-wrap pl-lg-0">
+                <div class="row w-100 mx-0 align-self-start">
+                    <h1 v-if="!editPlaylistName"> <span @click="editPlaylistName = true">{{ playlistName }}</span></h1>
+                    <div v-else class="input-group mb-3 col-7 col-sm-7">
+                        <input type="text" class="form-control" placeholder="Enter new playlist name" v-model="playlistName">
+                        <div class="input-group-append">
+                            <button type="button" class="btn btn-dark" @click="editPlayList(id,playlistName); editPlaylistName = false">edit</button>
+                            <button type="button" class="btn btn-dark" @click="removePlayList(id,playlistName); editPlaylistName = false">delete</button>
+                        </div>
+                    </div>
+                    <div class="mx-0 p-0 w-100">
+                        <div class="float-left py-1 pr-1" v-for="item in playlists" style="font-size: 18px;">
+                            <a class="badge badge-pill badge-dark text-white p-2 pointed" @click="id = item.id; playlistName = item.name; getSongList();"  v-model="item.id">{{ item.name }}</a>
+                        </div>
+
+                        <div class="float-left py-1 pr-1" style="font-size: 18px;">
+                            <a class="badge badge-pill badge-dark text-white p-2 pointed" data-toggle="modal" data-target="#addModal">+</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="row align-self-end mx-0 p-0 w-100">
+                    <div class="rounded py-1 w-100 title" style="">{{ name }}</div>
                 </div>
             </div>
-
-            <!--<button type="button" class="btn btn-dark dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                {{ playlistName }}
-            </button>
-            <div class="dropdown-menu">
-                <a class="dropdown-item" @click="id = item.id; name = item.name; getSongList();" v-for="item in playlists" v-model="item.id">{{ item.name }}</a>
-            </div>-->
-
-            <div class="float-left p-1" v-for="item in playlists" style="font-size: 18px;">
-                <a class="badge badge-pill badge-dark text-white p-2 pointed" @click="id = item.id; playlistName = item.name; getSongList();"  v-model="item.id">{{ item.name }}</a>
-            </div>
-
-            <div class="float-left p-1" style="font-size: 18px;">
-                <a class="badge badge-pill badge-dark text-white p-2 pointed" data-toggle="modal" data-target="#addModal">+</a>
+            <div class="col-md-6 pr-md-0">
+                <img src="pic/cover3.png" id="coverPicture" class="rounded pr-0 col-lg-12 pr-lg-2 pl-0" alt="cover">
             </div>
 
             <!-- Modal -->
@@ -82,7 +85,6 @@
             </div>
 
         </div>
-        <br>
 
         <div class="d-inline-flex bg-dark rounded w-100" id="player">
             <div class="btn-group bg-dark rounded h-100" role="group" aria-label="Basic example">
@@ -108,18 +110,19 @@
         </div>
         <div id="list">
             <ul class="list-group">
-                <draggable v-model="list" group="music" @end="onEnd">
+                <draggable v-model="list" handle=".handle" group="music" @end="onEnd">
                     <li v-for="(item, index) in list" v-bind:value="item.name" class="clearfix list-group-item list-group-item-action">
                         <span @click="name = item.name; playSong(item.id); active = item.id;">
                             <i class="fas fa-pause pr-3 pointed" v-if="active == item.id"></i>
                             <i class="fas fa-play pr-3 pointed" v-else></i>
                         </span>
                         {{ item.name }}
-                        <!--<a href="#" class="badge badge-pill badge-dark">{{ item.style }}</a>-->
-                        <!--<a href="#" class="badge badge-pill badge-dark">{{ item.author }}</a>-->
-                        <i class="fas fa-trash float-right pointed" @click="deleteSong(item.orderId)"></i>
-                        <i class="fas fa-pen float-right pr-3 pointed" @click="openModal(item)" data-toggle="modal" data-target="#editModal"></i>
-                        <i class="fas fa-download float-right pr-3 pointed" @click="downloadSong(index)"></i>
+                        <div class="float-right">
+                            <i class="fas fa-trash float-right pointed" @click="deleteSong(item.orderId)"></i>
+                            <i class="fas fa-pen float-right pr-3 pointed" @click="openModal(item)" data-toggle="modal" data-target="#editModal"></i>
+                            <i class="fas fa-download float-right pr-3 pointed" @click="downloadSong(index)"></i>
+                            <i class="fas fa-arrows-alt float-right pr-3 pointed handle"></i>
+                        </div>
                     </li>
                 </draggable>
             </ul>
