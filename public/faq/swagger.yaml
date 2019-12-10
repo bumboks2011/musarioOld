@@ -3,9 +3,8 @@ info:
   description: This is a documentation for Musario.
   version: "1.0"
   title: Swagger Musario
-  termsOfService: http://swagger.io/terms/
   contact:
-    email: apiteam@swagger.io
+    email: bumboks2011@gmail.com
 tags:
   - name: auths
     description: Everything about your Songs
@@ -1046,8 +1045,8 @@ paths:
           security:
               -   bearerAuth: []
 servers:
-  - url: http://188.68.98.195/api
-  - url: https://188.68.98.195/api
+  - url: https://musario.ml/api
+  - url: http://musario.ml/api
 components:
   requestBodies:
     UserArray:
