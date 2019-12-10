@@ -286,7 +286,6 @@
                     .get('api/songs')
                     .then(response => {
                         this.list = response.data;
-                        console.log(this.list);
                     })
                     .catch(error => console.log(error));
             },
@@ -393,7 +392,6 @@
                 axios
                     .get('api/playlists')
                     .then(response => {
-                        console.log(response.data);
                         this.playlists = response.data;
                         if (stretch === false) {
                             this.getSongList();

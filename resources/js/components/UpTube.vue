@@ -168,7 +168,6 @@
                         }
                     }
                 ).then(response => {
-                    //console.log(response);
                     this.spinner = false;
                     this.completeUpload = true;
                     this.files = '';

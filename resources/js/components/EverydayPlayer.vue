@@ -177,10 +177,6 @@
                             this.playerVisible = true;
                             this.list = response.data;
                             this.getLinksSongs();
-                            /*this.name = this.list[0].name;
-                            this.playSong(this.list[0].id,0);
-                            this.active = this.list[0].id;*/
-                            console.log(response.data);
                         } else {
                             this.alertNotify(false);
                         }
@@ -368,7 +364,6 @@
                 axios
                     .get('api/playlists')
                     .then(response => {
-                        console.log(response.data);
                         this.playlists = response.data;
                     })
                     .catch(error => console.log(error));

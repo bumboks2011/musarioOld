@@ -375,7 +375,6 @@
                 axios
                     .get('api/playlists')
                     .then(response => {
-                        console.log(response.data);
                         this.playlists = response.data;
                     })
                     .catch(error => console.log(error));

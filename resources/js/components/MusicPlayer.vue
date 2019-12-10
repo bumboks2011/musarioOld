@@ -350,7 +350,6 @@
                     .get('api/orders/' + id)
                     .then(response => {
                         this.list = this.sortList(0, response.data, [], this);
-                        //console.log(this.list);
                     })
                     .catch(error => console.log(error));
             },
@@ -487,7 +486,6 @@
                 axios
                     .get('api/playlists')
                     .then(response => {
-                        console.log(response.data);
                         this.playlists = response.data;
                         if (stretch === false) {
                             this.playlistName = response.data[0]['name'];
@@ -513,7 +511,6 @@
                     axios
                         .delete('api/playlists/' + id)
                         .then(response => {
-                            //console.log(json);
                             if(response.data === false) {
                                 alert('Delete playlist error!');
                             }
