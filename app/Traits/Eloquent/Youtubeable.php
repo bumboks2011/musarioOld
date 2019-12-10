@@ -27,7 +27,9 @@ trait Youtubeable
             'output' => '%(title)s.%(ext)s',
         ]);
         $dl->setDownloadPath(Storage::disk($storage)->getDriver()->getAdapter()->getPathPrefix() . $folder);
-        $dl->setPythonPath(env('PYTHON_PATH'));
+        if (env('PYTHON_PATH') !== '') {
+            $dl->setPythonPath(env('PYTHON_PATH'));
+        }
         $video = $dl->download($url);
 
         return ['name' => $video['title'], 'filename' => $video['_filename']];
