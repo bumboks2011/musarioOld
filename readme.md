@@ -1,6 +1,6 @@
 <p align="center"><img src="https://musario.ml/pic/land2.png"></p>
 
-## About Musario
+# About Musario
 
 In addition to the standard features of a music player (creating and editing playlists, editing the playback order in playlists, editing songs), it also includes such features as:
 
@@ -8,6 +8,11 @@ In addition to the standard features of a music player (creating and editing pla
 - **Search**. Provides the ability to search for songs on the Internet and, as well as Everyday download them and add to their playlists.
 - **Upload**. Allows you to upload songs in mp3 format to your playlists.
 - **UpTube**. Allows you to download sound from video from YouTube using url and add it to playlists.
+
+You can also see an example [musario.ml](https://musario.ml "musario.ml").
+
+# Documentation
+Swagger located at /documentation. You can also look [here](https://musario.ml/documentation "musario.ml/documentation").
 
 # Requirements
 - php 7.2.2
