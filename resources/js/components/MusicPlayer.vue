@@ -155,8 +155,8 @@
                             </select>
 
                             <p class="pt-2 mb-0">Style
-                                <a class="badge badge-pill badge-dark text-white" @click="editStyle = true">+</a>
-                                <a class="badge badge-pill badge-dark text-white" @click="autoStyle()">find</a>
+                                <a class="badge badge-pill badge-dark text-white pointed" @click="editStyle = true">+</a>
+                                <a class="badge badge-pill badge-dark text-white pointed" @click="autoStyle()">find</a>
                             </p>
                             <div v-if="editStyle" class="input-group mb-3">
                                 <input type="text" class="form-control" placeholder="Enter new style name" v-model="styleName">
