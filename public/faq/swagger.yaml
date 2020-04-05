@@ -906,6 +906,10 @@ paths:
                                   description: name
                                   type: string
                                   required: true
+                              type:
+                                  description: type
+                                  type: string
+                                  example: 'track/artist'
           responses:
               200:
                   description: successful operation

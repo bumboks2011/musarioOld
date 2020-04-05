@@ -53,7 +53,7 @@
 
         </div>
 
-        <div class="d-inline-flex bg-dark rounded w-100" id="player" v-if="playerVisible">
+        <div class="d-inline-flex sticky-top bg-dark rounded w-100" id="player" v-if="playerVisible">
             <div class="btn-group bg-dark rounded h-100" role="group" aria-label="Basic example">
                 <button type="button" class="btn btn-dark" v-on:click="prevSong()"><</button>
                 <button type="button" class="btn btn-dark" v-on:click="play = !play; update();  play ? audio.play() : audio.pause()"><span v-if="play">||</span><span v-else>&#9658;</span></button>

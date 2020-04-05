@@ -53,7 +53,7 @@
 
         </div>
 
-        <div class="d-inline-flex bg-dark rounded w-100" id="player" v-if="playerVisible">
+        <div class="d-inline-flex sticky-top bg-dark rounded w-100" id="player" v-if="playerVisible">
             <div class="btn-group bg-dark rounded h-100" role="group" aria-label="Basic example">
                 <button type="button" class="btn btn-dark" v-on:click="prevSong()"><</button>
                 <button type="button" class="btn btn-dark" v-on:click="play = !play; update();  play ? audio.play() : audio.pause()"><span v-if="play">||</span><span v-else>&#9658;</span></button>
@@ -78,9 +78,13 @@
 
         <div class="pt-2">
             <div class="input-group mb-3">
-                <input type="text" class="form-control" placeholder="Author - song name" aria-describedby="button-addon2" v-model="search" @keyup.enter="searchSong">
+                <input type="text" class="form-control" :placeholder="SearchType === 'track' ? 'Author - song name' : 'Author name'" aria-describedby="button-addon2" v-model="search" @keyup.enter="searchSong">
                 <div class="input-group-append">
-                    <button class="btn btn-dark" type="button" id="button-addon2" @click="searchSong">Search</button>
+                    <button class="btn btn-dark" type="button" id="button-addon2">
+                        <span v-if="SearchType === 'track'" @click="SearchType = 'artist'"><i class="fas fa-music"></i></span>
+                        <span v-else @click="SearchType = 'track'"><i class="fas fa-user"></i></span>
+                    </button>
+                    <button class="btn btn-dark" type="button" id="button-addon3" @click="searchSong">Search</button>
                 </div>
             </div>
         </div>
@@ -111,6 +115,9 @@
                     </div>
                 </li>
             </ul>
+            <div class="text-center pt-2" v-if="list.length && listFull.length !== list.length">
+                <button class="btn btn-dark" type="button" @click="increasePage">More</button>
+            </div>
         </div>
 
         <transition name="slide-fade">
@@ -142,6 +149,7 @@
             return {
                 playerVisible: false,
                 isSearch: false,
+                SearchType: 'track',
                 search: '',
                 play: false,
                 volume: false,
@@ -154,6 +162,8 @@
                 type: ['mp3'],
 
                 list: [],
+                listFull: [],
+                pageSize: 20,
                 active: 0,
                 editname: '',
                 editid: 0,
@@ -179,13 +189,15 @@
                 this.list = [];
                 this.active = null;
                 this.isSearch = true;
+                this.pageSize = 20;
 
                 axios
-                    .post('api/services/search',{name: this.search})
+                    .post('api/services/search',{name: this.search, type: this.SearchType})
                     .then(response => {
                         if(response.data.length !== 0) {
                             this.playerVisible = true;
-                            this.list = response.data;
+                            this.listFull = response.data;
+                            this.list = response.data.slice(0, this.pageSize);
                             this.getLinksSongs();
                         } else {
                             this.alertNotify(false, 'Not Found!');
@@ -199,7 +211,9 @@
             },
             async getLinksSongs() {
                 for(var i = 0; i < this.list.length; i++) {
-                    this.list[i].link = await this.getLinkById(this.list[i].id);
+                    if (this.list[i].link == null) {
+                        this.list[i].link = await this.getLinkById(this.list[i].id);
+                    }
                 }
             },
             async getLinkById(id) {
@@ -219,6 +233,10 @@
                         this.alertNotify(false);
                     });
                 return linkos;
+            },
+            increasePage(){
+                this.pageSize+=10;
+                this.list = this.list.concat(this.listFull.slice(this.list.length, this.pageSize-1));
             },
             update(){
                 //this.$forceUpdate();

@@ -16,6 +16,7 @@ class ServiceService implements ServiceServiceInterface
     private $genreRepository;
     private $everydayRepository;
     private $yaBaseUrl = 'https://api.music.yandex.net';
+    private $quantitySong = 80;
 
     /**
      * ServiceService constructor.
@@ -63,27 +64,49 @@ class ServiceService implements ServiceServiceInterface
     }
 
     /**
-     * Searches for music by name using ya api
+     * Searches for music by song/author name using ya api
      *
      * @param $data
      * @return array
      */
-    public function getSearchByName($data) {
-        $out = $this->curl($this->yaBaseUrl . '/search?text=' . urlencode($data->name) . '&page=0&type=track');
-        //return $out;
+    public function getSearchByName($data)
+    {
+        $type = empty($data->type) || $data->type == 'track' ? 'track' : 'artist';
+        $out = $this->curl($this->yaBaseUrl . '/search?text=' . urlencode($data->name) . '&page=0&type=' . $type);
         $tracks = [];
-        if (empty($out['result']['tracks']['results'])) {
-            return $tracks;
+        if ($type == 'track') {
+            if (empty($out['result']['tracks']['results'])) {
+                return $tracks;
+            }
+            $length = count($out['result']['tracks']['results']) < $this->quantitySong ? count($out['result']['tracks']['results']) : $this->quantitySong;
+            for ($i = 0; $i < $length; $i++) {
+                $author = empty($out['result']['tracks']['results'][$i]['artists']) ? 'Unknown' : $out['result']['tracks']['results'][$i]['artists'][0]['name'];
+                $tracks[] = [
+                    'id' => $out['result']['tracks']['results'][$i]['id'],
+                    'author' => $author,
+                    'name' => $author . ' - ' . $out['result']['tracks']['results'][$i]['title'],
+                    'link' => null,
+                ];
+            }
+        } else {
+            if (empty($out['result']['artists'])) {
+                return $tracks;
+            }
+            $out = $this->curl('https://music.yandex.ru/handlers/artist.jsx?artist=' .
+                $out['result']['artists']['results'][0]['id'] .
+                '&what=tracks&sort=&dir=&period=&lang=ru&overembed=false');
+            $length = count($out['tracks']) < $this->quantitySong ? count($out['tracks']) : $this->quantitySong;
+            $author = $out['artist']['name'];
+            for ($i = 0; $i < $length; $i++) {
+                $tracks[] = [
+                    'id' => $out['tracks'][$i]['id'],
+                    'author' => $author,
+                    'name' => $author . ' - ' . $out['tracks'][$i]['title'],
+                    'link' => null,
+                ];
+            }
         }
-        for ($i = 0; $i < 20; $i++) {
-            $author = empty($out['result']['tracks']['results'][$i]['artists']) ? 'Unknown' : $out['result']['tracks']['results'][$i]['artists'][0]['name'];
-            $tracks[] = [
-                'id' => $out['result']['tracks']['results'][$i]['id'],
-                'author' => $author,
-                'name' => $author . ' - ' . $out['result']['tracks']['results'][$i]['title'],
-                'link' => null,
-            ];
-        }
+
         return $tracks;
     }
 
@@ -135,7 +158,7 @@ class ServiceService implements ServiceServiceInterface
      * @param bool $decode
      * @return bool|mixed|string
      */
-    private function curl($url, $decode = true) {
+    public function curl($url, $decode = true) {
         $curl = curl_init();
         curl_setopt($curl, CURLOPT_URL, $url);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER,true);
