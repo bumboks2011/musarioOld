@@ -175,7 +175,7 @@
                     .then(response => {
                         if(response.data !== false) {
                             this.playerVisible = true;
-                            this.list = response.data;
+                            this.list = this.removeDuplicatesSafe(response.data, 'ya_id');
                             this.getLinksSongs();
                         } else {
                             this.alertNotify(false);
@@ -390,6 +390,20 @@
                     .catch(error => {
                         console.log(error);
                     });
+            },
+
+            //Additions
+            removeDuplicatesSafe(arr, field) {
+                var seen = {};
+                var ret_arr = [];
+                for (var i = 0; i < arr.length; i++) {
+                    if (!(arr[i][field] in seen)) {
+                        ret_arr.push(arr[i]);
+                        seen[arr[i][field]] = true;
+                    }
+                }
+                return ret_arr;
+
             },
 
             //Watcher
