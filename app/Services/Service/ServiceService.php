@@ -6,6 +6,7 @@ namespace App\Services\Service;
 
 use App\Repositories\Everyday\EverydayRepository;
 use App\Repositories\Genre\GenreRepository;
+use Symfony\Component\Process\Process;
 
 class ServiceService implements ServiceServiceInterface
 {
@@ -16,6 +17,9 @@ class ServiceService implements ServiceServiceInterface
     private $genreRepository;
     private $everydayRepository;
     private $yaBaseUrl = 'https://api.music.yandex.net';
+    private $yaAuthUrl = 'https://oauth.yandex.ru';
+    private $clientId = '23cabbbdc6cd418abb4b39c32c41195d';
+    private $clientSecret = '53bc75238f0c4d08a118e51fe9203300';
     private $quantitySong = 80;
 
     /**
@@ -56,7 +60,8 @@ class ServiceService implements ServiceServiceInterface
         $url = $this->urlApple . urlencode($data->name);
         $out = $this->curl($url);
         if ($out['results']) {
-            $url = $out['results'][0]['artworkUrl100'];
+            $key = array_search('song', array_column($out['results'], 'kind'));
+            $url = $out['results'][(int) $key]['artworkUrl100'];
             return substr($url, 0, stripos($url, $this->nipleApple)) . '' . $this->pathApple;
         } else {
             return false;
@@ -152,16 +157,57 @@ class ServiceService implements ServiceServiceInterface
     }
 
     /**
+     * Auth in ya music and get token
+     *
+     * @param $username
+     * @param $password
+     * @param string $grant_type
+     * @param null $x_captcha_answer
+     * @param null $x_captcha_key
+     * @param null $timeout
+     * @return void
+     */
+    public function getYaToken($grant_type = 'password') {
+        if (env('YA_TOKEN_EXPIRE') > time()) {
+            return;
+        }
+        $url =  $this->yaAuthUrl . '/token';
+        $data = [
+            'grant_type' => $grant_type,
+            'client_id' => $this->clientId,
+            'client_secret' => $this->clientSecret,
+            'username' => env('YA_NAME'),
+            'password' => env('YA_PASS')
+        ];
+        $result = $this->curl($url, true, $data);
+        $process = new Process(['php artisan env:set', 'YA_TOKEN', $result['access_token']]);
+        $process->run();
+        $process = new Process(['php artisan env:set', 'YA_TOKEN_EXPIRE', time() + $result['expires_in']]);
+        $process->run();
+        sleep(0.1);
+    }
+
+    /**
      * fulfills curl request
      *
      * @param $url
      * @param bool $decode
+     * @param array $data
      * @return bool|mixed|string
      */
-    public function curl($url, $decode = true) {
+    public function curl($url, $decode = true, $data = []) {
         $curl = curl_init();
         curl_setopt($curl, CURLOPT_URL, $url);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER,true);
+        $headers = [
+            'X-Yandex-Music-Client: WindowsPhone/3.17',
+            'User-Agent: Windows 10',
+            'Connection: Keep-Alive',
+            'Authorization: OAuth ' . env('YA_TOKEN')
+        ];
+        curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
+        $data ? curl_setopt($curl, CURLOPT_POST, true) : '';
+        $data ? curl_setopt($curl, CURLOPT_POSTFIELDS, $data) : '';
         $out = curl_exec($curl);
         curl_close($curl);
 

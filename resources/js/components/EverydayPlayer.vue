@@ -238,6 +238,14 @@
                     }
                     this.play = true;
                     await this.audio.play();
+                    if ('mediaSession' in navigator) {
+                        navigator.mediaSession.metadata = new MediaMetadata({
+                            title: this.name,
+                            artist: this.authorName
+                        });
+                    }
+                    navigator.mediaSession.setActionHandler('previoustrack', this.prevSong);
+                    navigator.mediaSession.setActionHandler('nexttrack', this.nextSong);
                     this.findCover(this.name);
                     this.songListened(index);
                 } else {
@@ -354,6 +362,15 @@
                     .then(response => {
                         if (response.data !== false) {
                             document.getElementById("coverPicture").src = response.data;
+                            if ('mediaSession' in navigator) {
+                                navigator.mediaSession.metadata = new MediaMetadata({
+                                    title: this.name,
+                                    artist: this.authorName,
+                                    artwork: [
+                                        { src: response.data, sizes: '512x512', type: 'image/jpg' },
+                                    ]
+                                });
+                            }
                         }
                     })
                     .catch(error => {
